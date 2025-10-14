@@ -21,7 +21,7 @@ namespace minesweeper
         static string gameover_type = "false";
         static void Main(string[] args)
         {
-            Console.Title = "Aknakereső - Relase 1.3 - Új játék létrehozása";
+            Console.Title = "Aknakereső - Debug 1.4 - Új játék létrehozása";
             int max;
             bool converted;
             do
