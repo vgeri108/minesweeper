@@ -24,7 +24,7 @@ namespace minesweeper
         {
             do
             {
-                Console.Title = "Aknakereső - Debug 1.4 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Beta 1.3.2 - Új játék létrehozása";
                 int max;
                 bool converted;
                 do
@@ -107,8 +107,6 @@ namespace minesweeper
                         Console.WriteLine("A válasz csak \"igen\" vagy \"nem\" lehet!");
                     }
                 } while (!correct);
-
-
             } while (newgame);
         }
         /// <summary>
@@ -454,6 +452,10 @@ namespace minesweeper
         {
             gameover = false;
             gameover_type = "false";
+            flagcount = 0;
+            cursor_x = 0;
+            cursor_y = 0;
+            Console.Clear();
         }
     }
 }
