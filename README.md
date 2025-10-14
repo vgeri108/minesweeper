@@ -11,17 +11,17 @@
                                             |_|              
   </pre>
   <br>
-  <h1>Aknakereső konzolalkalmazás</h1>
+  <b><h1>Aknakereső konzolalkalmazás</h1></b>
   Támogatott platformok: Windows<br>
   A Linux és Mac verzió még hibás.<br>
   <br>
-  <h3>Irányítás</h3>
+  <b><h2>Irányítás</h2></b>
   Kurzor mozgatás: nyílgombok<br>
   Mező kiásása: W<br>
   Mező bezászlózása: Space<br>
   Kilépés a játékból: Escape<br>
   <br>
-  <h3>Hibák</h3>
-  Itt tudod a hibákat megnézni és új hibát jelenteni: https://github.com/vgeri108/minesweeper/issues 
+  <b><h2>Hibák</h2></b>
+  Itt tudod a hibákat megnézni és új hibát jelenteni: <a href = https://github.com/vgeri108/minesweeper/issues>Issues</a>
 </body>
 </html>
