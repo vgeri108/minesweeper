@@ -24,7 +24,16 @@ namespace minesweeper
         {
             do
             {
-                Console.Title = "Aknakereső - Beta 1.3.2 - Új játék létrehozása";
+                Console.WriteLine(
+@" __  __ _                                                   
+ |  \/  (_)                                                  
+ | \  / |_ _ __   ___  _____      _____  ___ _ __   ___ _ __ 
+ | |\/| | | '_ \ / _ \/ __\ \ /\ / / _ \/ _ \ '_ \ / _ \ '__|
+ | |  | | | | | |  __/\__ \\ V  V /  __/  __/ |_) |  __/ |   
+ |_|  |_|_|_| |_|\___||___/ \_/\_/ \___|\___| .__/ \___|_|   
+                                            | |              
+                                            |_|              ");
+                Console.Title = "Aknakereső - Beta 1.3.3 - Új játék létrehozása";
                 int max;
                 bool converted;
                 do
