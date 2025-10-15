@@ -24,7 +24,7 @@ namespace minesweeper
         {
             do
             {
-                Console.Title = "Aknakereső - Debug 1.3.4 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Beta 1.3.4 - Új játék létrehozása";
                 Menu();
                 string[,] akna = new string[meret, meret];
                 string[,] visible = new string[meret, meret];
