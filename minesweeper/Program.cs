@@ -24,59 +24,8 @@ namespace minesweeper
         {
             do
             {
-                Console.WriteLine(
-@" __  __ _                                                   
- |  \/  (_)                                                  
- | \  / |_ _ __   ___  _____      _____  ___ _ __   ___ _ __ 
- | |\/| | | '_ \ / _ \/ __\ \ /\ / / _ \/ _ \ '_ \ / _ \ '__|
- | |  | | | | | |  __/\__ \\ V  V /  __/  __/ |_) |  __/ |   
- |_|  |_|_|_| |_|\___||___/ \_/\_/ \___|\___| .__/ \___|_|   
-                                            | |              
-                                            |_|              ");
-                Console.Title = "Aknakereső - Beta 1.3.3 - Új játék létrehozása";
-                int max;
-                bool converted;
-                do
-                {
-                    converted = false;
-                    Console.Write("Méret: ");
-                    converted = int.TryParse(Console.ReadLine(), out meret);
-                    max = Console.WindowHeight;
-                    if (Console.WindowWidth < max) max = Console.WindowWidth;
-                    if (!converted)
-                    {
-                        Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
-                    }
-                    else if (meret < 2)
-                    {
-                        Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
-                    }
-                    else if (meret > max - 3)
-                    {
-                        Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
-                    }
-                } while (!(converted && meret < max - 2 && meret > 1));
-
-                max = (meret * meret) - 1;
-                do
-                {
-                    converted = false;
-                    Console.Write("Aknák száma: ");
-                    converted = int.TryParse(Console.ReadLine(), out aknakszama);
-                    if (!converted)
-                    {
-                        Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
-                    }
-                    else if (aknakszama < 1)
-                    {
-                        Console.WriteLine("Az aknák száma nem lehet 0 vagy annál kevesebb!");
-                    }
-                    else if (aknakszama > max)
-                    {
-                        Console.WriteLine("Legalább egy üres helynek lennie kell a pályán, nem lehet annál többet megadni!");
-                    }
-                } while (!(converted && aknakszama < max && aknakszama > 0));
-
+                Console.Title = "Aknakereső - Debug 1.3.4 - Új játék létrehozása";
+                Menu();
                 string[,] akna = new string[meret, meret];
                 string[,] visible = new string[meret, meret];
                 Console.Clear();
@@ -137,13 +86,13 @@ namespace minesweeper
             }
             for (int i = 0; i < aknakszama; i++)
             {
-                int x = random.Next(0, (meret));
-                int y = random.Next(0, (meret));
-                if (akna[x, y] == semmi)
+                int x, y;
+                do
                 {
-                    akna[x, y] = minemark;
-                }
-                else i--;
+                    x = random.Next(0, meret);
+                    y = random.Next(0, meret);
+                } while ((akna[x, y] != semmi) || (x == cursor_y && y == cursor_x));
+                akna[x, y] = minemark;
             }
             return akna;
         }
@@ -430,8 +379,9 @@ namespace minesweeper
                 Generate(ref akna);
             } while (akna[cursor_y, cursor_x] == minemark);  //== minemark*/
 
-            bool vanUres = false;
-            do
+            bool vanUres;
+            bool siker = false;
+            for (int tries = 0; tries < 1000 && !siker; tries++)
             {
                 akna_letrehozas(ref akna, ref visible);
                 Generate(ref akna);
@@ -450,7 +400,15 @@ namespace minesweeper
                     if (vanUres) break;
                 }
 
-            } while ((vanUres && akna[cursor_y, cursor_x] != semmi) || (!vanUres && akna[cursor_y, cursor_x] == minemark));
+                if (akna[cursor_y, cursor_x] == semmi)
+                {
+                    siker = true;
+                }
+                else if (!vanUres && akna[cursor_y, cursor_x] != minemark)
+                {
+                    siker = true;
+                }
+            }
 
 
             Felfedes(akna, ref visible, cursor_y, cursor_x);
@@ -465,6 +423,110 @@ namespace minesweeper
             cursor_x = 0;
             cursor_y = 0;
             Console.Clear();
+        }
+        static void Menu()
+        {
+            string[] options = {
+                "Könnyű (9x9, 10 akna)",
+                "Közepes (16x16, 40 akna)",
+                "Nehéz (24x24, 99 akna)",
+                "Egyedi pálya"
+            };
+            int selected = 0;
+            ConsoleKey key;
+            do
+            {
+                Console.Clear();
+                Title();
+                Console.WriteLine("Válassz nehézségi szintet:");
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selected)
+                        Console.Write("> ");
+                    else
+                        Console.Write("  ");
+                    Console.WriteLine(options[i]);
+                }
+
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.UpArrow && selected > 0)
+                    selected--;
+                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                    selected++;
+            } while (key != ConsoleKey.Enter);
+
+            switch (selected)
+            {
+                case 0:
+                    meret = 9;
+                    aknakszama = 10;
+                    break;
+                case 1:
+                    meret = 16;
+                    aknakszama = 40;
+                    break;
+                case 2:
+                    meret = 24;
+                    aknakszama = 99;
+                    break;
+                case 3:
+                    int max;
+                    bool converted;
+                    do
+                    {
+                        converted = false;
+                        Console.Write("Méret: ");
+                        converted = int.TryParse(Console.ReadLine(), out meret);
+                        max = Console.WindowHeight;
+                        if (Console.WindowWidth < max) max = Console.WindowWidth;
+                        if (!converted)
+                        {
+                            Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
+                        }
+                        else if (meret < 2)
+                        {
+                            Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
+                        }
+                        else if (meret > max - 3)
+                        {
+                            Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
+                        }
+                    } while (!(converted && meret < max - 2 && meret > 1));
+
+                    max = (meret * meret) - 1;
+                    do
+                    {
+                        converted = false;
+                        Console.Write("Aknák száma: ");
+                        converted = int.TryParse(Console.ReadLine(), out aknakszama);
+                        if (!converted)
+                        {
+                            Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
+                        }
+                        else if (aknakszama < 1)
+                        {
+                            Console.WriteLine("Az aknák száma nem lehet 0 vagy annál kevesebb!");
+                        }
+                        else if (aknakszama > max)
+                        {
+                            Console.WriteLine("Legalább egy üres helynek lennie kell a pályán, nem lehet annál többet megadni!");
+                        }
+                    } while (!(converted && aknakszama < max && aknakszama > 0));
+                    break;
+            }
+            //ide be kell raknom, hogy ellenőrizze hoyg ráfér e a képernyőre
+            static void Title()
+            {
+                Console.WriteLine(
+@" __  __ _                                                   
+ |  \/  (_)                                                  
+ | \  / |_ _ __   ___  _____      _____  ___ _ __   ___ _ __ 
+ | |\/| | | '_ \ / _ \/ __\ \ /\ / / _ \/ _ \ '_ \ / _ \ '__|
+ | |  | | | | | |  __/\__ \\ V  V /  __/  __/ |_) |  __/ |   
+ |_|  |_|_|_| |_|\___||___/ \_/\_/ \___|\___| .__/ \___|_|   
+                                            | |              
+                                            |_|              ");
+            }
         }
     }
 }
