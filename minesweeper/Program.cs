@@ -24,7 +24,7 @@ namespace minesweeper
         {
             do
             {
-                Console.Title = "Aknakereső - Beta 1.3.4 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Beta 1.3.5 - Új játék létrehozása";
                 Menu();
                 string[,] akna = new string[meret, meret];
                 string[,] visible = new string[meret, meret];
@@ -426,98 +426,119 @@ namespace minesweeper
         }
         static void Menu()
         {
-            string[] options = {
-                "Könnyű (9x9, 10 akna)",
-                "Közepes (16x16, 40 akna)",
-                "Nehéz (24x24, 99 akna)",
-                "Egyedi pálya"
-            };
-            int selected = 0;
-            ConsoleKey key;
+            int max;
+            bool siker = false;
             do
             {
-                Console.Clear();
-                Title();
-                Console.WriteLine("Válassz nehézségi szintet:");
-                for (int i = 0; i < options.Length; i++)
+                string[] options = {
+                    "Könnyű (9x9, 10 akna)",
+                    "Közepes (16x16, 40 akna)",
+                    "Nehéz (24x24, 99 akna)",
+                    "Egyedi pálya",
+                    "Kilépés"
+                };
+                int selected = 0;
+                ConsoleKey key;
+                do
                 {
-                    if (i == selected)
-                        Console.Write("> ");
-                    else
-                        Console.Write("  ");
-                    Console.WriteLine(options[i]);
+                    Console.Clear();
+                    Title();
+                    Console.WriteLine("Válassz nehézségi szintet:");
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        if (i == selected)
+                            Console.Write("> ");
+                        else
+                            Console.Write("  ");
+                        Console.WriteLine(options[i]);
+                    }
+
+                    key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.UpArrow && selected > 0)
+                        selected--;
+                    else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                        selected++;
+                } while (key != ConsoleKey.Enter);
+
+                switch (selected)
+                {
+                    case 0:
+                        meret = 9;
+                        aknakszama = 10;
+                        break;
+                    case 1:
+                        meret = 16;
+                        aknakszama = 40;
+                        break;
+                    case 2:
+                        meret = 24;
+                        aknakszama = 99;
+                        break;
+                    case 3:
+                        bool converted;
+                        do
+                        {
+                            converted = false;
+                            Console.Write("Méret: ");
+                            converted = int.TryParse(Console.ReadLine(), out meret);
+                            max = Console.WindowHeight;
+                            if (Console.WindowWidth < max) max = Console.WindowWidth;
+                            if (!converted)
+                            {
+                                Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
+                            }
+                            else if (meret < 2)
+                            {
+                                Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
+                            }
+                            else if (meret > max - 3)
+                            {
+                                Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
+                            }
+                        } while (!(converted && meret < max - 2 && meret > 1));
+
+                        max = (meret * meret) - 1;
+                        do
+                        {
+                            converted = false;
+                            Console.Write("Aknák száma: ");
+                            converted = int.TryParse(Console.ReadLine(), out aknakszama);
+                            if (!converted)
+                            {
+                                Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
+                            }
+                            else if (aknakszama < 1)
+                            {
+                                Console.WriteLine("Az aknák száma nem lehet 0 vagy annál kevesebb!");
+                            }
+                            else if (aknakszama > max)
+                            {
+                                Console.WriteLine("Legalább egy üres helynek lennie kell a pályán, nem lehet annál többet megadni!");
+                            }
+                        } while (!(converted && aknakszama < max && aknakszama > 0));
+                        siker = true;
+                    break;
+                    case 4:
+                        Environment.Exit(0);
+                    break;
+                }
+                max = Console.WindowHeight;
+                if (Console.WindowWidth < max - 3) max = Console.WindowWidth;
+                if (meret < max)
+                {
+                    siker = true;
+                }
+                else
+                {
+                    Console.WriteLine("A kiválasztott játékterület nem fér ki a képernyőre!");
+                    Console.ReadKey(true);
                 }
 
-                key = Console.ReadKey(true).Key;
-                if (key == ConsoleKey.UpArrow && selected > 0)
-                    selected--;
-                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
-                    selected++;
-            } while (key != ConsoleKey.Enter);
-
-            switch (selected)
-            {
-                case 0:
-                    meret = 9;
-                    aknakszama = 10;
-                    break;
-                case 1:
-                    meret = 16;
-                    aknakszama = 40;
-                    break;
-                case 2:
-                    meret = 24;
-                    aknakszama = 99;
-                    break;
-                case 3:
-                    int max;
-                    bool converted;
-                    do
-                    {
-                        converted = false;
-                        Console.Write("Méret: ");
-                        converted = int.TryParse(Console.ReadLine(), out meret);
-                        max = Console.WindowHeight;
-                        if (Console.WindowWidth < max) max = Console.WindowWidth;
-                        if (!converted)
-                        {
-                            Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
-                        }
-                        else if (meret < 2)
-                        {
-                            Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
-                        }
-                        else if (meret > max - 3)
-                        {
-                            Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
-                        }
-                    } while (!(converted && meret < max - 2 && meret > 1));
-
-                    max = (meret * meret) - 1;
-                    do
-                    {
-                        converted = false;
-                        Console.Write("Aknák száma: ");
-                        converted = int.TryParse(Console.ReadLine(), out aknakszama);
-                        if (!converted)
-                        {
-                            Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
-                        }
-                        else if (aknakszama < 1)
-                        {
-                            Console.WriteLine("Az aknák száma nem lehet 0 vagy annál kevesebb!");
-                        }
-                        else if (aknakszama > max)
-                        {
-                            Console.WriteLine("Legalább egy üres helynek lennie kell a pályán, nem lehet annál többet megadni!");
-                        }
-                    } while (!(converted && aknakszama < max && aknakszama > 0));
-                    break;
-            }
-            //ide be kell raknom, hogy ellenőrizze hoyg ráfér e a képernyőre
-            static void Title()
-            {
-                Console.WriteLine(
+            } while (!siker);
+        }
+        static void Title()
+        {
+            Console.WriteLine(
 @" __  __ _                                                   
  |  \/  (_)                                                  
  | \  / |_ _ __   ___  _____      _____  ___ _ __   ___ _ __ 
@@ -526,7 +547,6 @@ namespace minesweeper
  |_|  |_|_|_| |_|\___||___/ \_/\_/ \___|\___| .__/ \___|_|   
                                             | |              
                                             |_|              ");
-            }
         }
     }
 }
