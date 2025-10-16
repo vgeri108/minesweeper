@@ -13,6 +13,7 @@
   <br>
   <b><h1>Aknakereső konzolalkalmazás</h1></b>
   Támogatott platformok: Windows<br>
+  Támogatott Windows verziók: 8: tesztelés alatt, <b>10: teljes</b>, <a href = "https://github.com/vgeri108/minesweeper/issues/4">11: megjelenítési problémák a nagyításnál.</a><br>
   A Linux és Mac verzió még hibás.<br>
   <br>
   <b><h2>Irányítás</h2></b>
