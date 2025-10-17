@@ -19,12 +19,12 @@ namespace minesweeper
         static ConsoleKey quit = ConsoleKey.Escape;
         static bool gameover = false;
         static string gameover_type = "false";
-        static bool newgame;
+        static bool newgame = true;
         static void Main(string[] args)
         {
             do
             {
-                Console.Title = "Aknakereső - Debug 1.3.6 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Relase 1.4 - Új játék létrehozása";
                 Menu();
                 string[,] akna = new string[meret, meret];
                 string[,] visible = new string[meret, meret];
@@ -41,30 +41,7 @@ namespace minesweeper
                     case "flagged": Console.WriteLine("Bejelölted az összes aknát, ami azt jelenti, hogy nyertél!"); break;
                     case "quit": Console.WriteLine("Kiléptél a jelenlegi játékból."); break;
                 }
-                Console.WriteLine();
-                bool correct = false;
-                do
-                {
-                    Console.WriteLine("Szeretnél új játékot kezdeni?");
-                    string answer = Console.ReadLine();
-                    if (answer == "igen" || answer == "IGEN" || answer == "Igen" || answer == "i" || answer == "I")
-                    {
-                        correct = true;
-                        Reset();
-                        newgame = true;
-                    }
-                    else
-                    if (answer == "nem" || answer == "NEM" || answer == "Nem" || answer == "n" || answer == "N")
-                    {
-                        correct = true;
-                        newgame = false;
-                    }
-                    else
-                    {
-                        correct = false;
-                        Console.WriteLine("A válasz csak \"igen\" vagy \"nem\" lehet!");
-                    }
-                } while (!correct);
+                Console.ReadKey(true);
             } while (newgame);
         }
         /// <summary>
@@ -272,6 +249,7 @@ namespace minesweeper
                     visible[CurTop, CurLeft] = "flag";
                     flagcount++;
                     Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
                     Console.Write(zaszlo);
                     Console.ResetColor();
                     //Draw(akna, visible, true);
