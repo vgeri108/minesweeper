@@ -1,14 +1,11 @@
 
 <body>
   <pre>
-  __  __ _                                                   
- |  \/  (_)                                                  
- | \  / |_ _ __   ___  _____      _____  ___ _ __   ___ _ __ 
- | |\/| | | '_ \ / _ \/ __\ \ /\ / / _ \/ _ \ '_ \ / _ \ '__|
- | |  | | | | | |  __/\__ \\ V  V /  __/  __/ |_) |  __/ |   
- |_|  |_|_|_| |_|\___||___/ \_/\_/ \___|\___| .__/ \___|_|   
-                                            | |              
-                                            |_|              
+     _    _                _                        ___ 
+   / \  | | ___ __   __ _| | _____ _ __ ___  ___  /_/_/
+  / _ \ | |/ / '_ \ / _` | |/ / _ \ '__/ _ \/ __|/ _ \ 
+ / ___ \|   <| | | | (_| |   <  __/ | |  __/\__ \ |_| |
+/_/   \_\_|\_\_| |_|\__,_|_|\_\___|_|  \___||___/\___/ 
   </pre>
   <br>
   <b><h1>Aknakereső konzolalkalmazás</h1></b>
@@ -20,7 +17,7 @@
   Kurzor mozgatás: nyílgombok<br>
   Mező kiásása: W<br>
   Mező bezászlózása: Space<br>
-  Kilépés a játékból: Escape<br>
+  Kilépés a menübe: Escape<br>
   <br>
   <b><h2>Hibák</h2></b>
   Itt tudod a hibákat megnézni és új hibát jelenteni: <a href = https://github.com/vgeri108/minesweeper/issues>Issues</a>
