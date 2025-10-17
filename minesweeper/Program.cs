@@ -24,7 +24,7 @@ namespace minesweeper
         {
             do
             {
-                Console.Title = "Aknakereső - Beta 1.3.5 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Debug 1.3.6 - Új játék létrehozása";
                 Menu();
                 string[,] akna = new string[meret, meret];
                 string[,] visible = new string[meret, meret];
@@ -538,15 +538,14 @@ namespace minesweeper
         }
         static void Title()
         {
-            Console.WriteLine(
-@" __  __ _                                                   
- |  \/  (_)                                                  
- | \  / |_ _ __   ___  _____      _____  ___ _ __   ___ _ __ 
- | |\/| | | '_ \ / _ \/ __\ \ /\ / / _ \/ _ \ '_ \ / _ \ '__|
- | |  | | | | | |  __/\__ \\ V  V /  __/  __/ |_) |  __/ |   
- |_|  |_|_|_| |_|\___||___/ \_/\_/ \___|\___| .__/ \___|_|   
-                                            | |              
-                                            |_|              ");
+            Console.WriteLine(@"
+    _    _                _                        ___ 
+   / \  | | ___ __   __ _| | _____ _ __ ___  ___  /_/_/
+  / _ \ | |/ / '_ \ / _` | |/ / _ \ '__/ _ \/ __|/ _ \ 
+ / ___ \|   <| | | | (_| |   <  __/ | |  __/\__ \ |_| |
+/_/   \_\_|\_\_| |_|\__,_|_|\_\___|_|  \___||___/\___/ 
+
+");
         }
     }
 }
