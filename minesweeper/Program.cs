@@ -24,7 +24,7 @@ namespace minesweeper
         {
             do
             {
-                Console.Title = "Aknakereső - Relase 1.4 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Relase 1.4.1 - Új játék létrehozása";
                 Menu();
                 string[,] akna = new string[meret, meret];
                 string[,] visible = new string[meret, meret];
@@ -211,6 +211,7 @@ namespace minesweeper
                     else if (visible[i, j] == "flag")
                     {
                         Console.BackgroundColor = ConsoleColor.DarkBlue;
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
                         Console.Write(zaszlo);
                         Console.ResetColor();
                     }
@@ -517,7 +518,7 @@ namespace minesweeper
         static void Title()
         {
             Console.WriteLine(@"
-    _    _                _                        ___ 
+    _    _                _                        ____
    / \  | | ___ __   __ _| | _____ _ __ ___  ___  /_/_/
   / _ \ | |/ / '_ \ / _` | |/ / _ \ '__/ _ \/ __|/ _ \ 
  / ___ \|   <| | | | (_| |   <  __/ | |  __/\__ \ |_| |
