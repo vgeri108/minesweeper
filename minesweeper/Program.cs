@@ -24,7 +24,7 @@ namespace minesweeper
         {
             do
             {
-                Console.Title = "Aknakereső - Relase 1.4.1 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Relase 1.4.2 - Új játék létrehozása";
                 Menu();
                 string[,] akna = new string[meret, meret];
                 string[,] visible = new string[meret, meret];
@@ -226,9 +226,9 @@ namespace minesweeper
         /// <param name="visible"></param>
         static void Select(string[,] akna, ref string[,] visible)
         {
-            var cur = Console.GetCursorPosition();
+            /*var cur = Console.GetCursorPosition();
             int CurTop = Convert.ToInt32(cur.Top);
-            int CurLeft = Convert.ToInt32(cur.Left);
+            int CurLeft = Convert.ToInt32(cur.Left);*/
             ConsoleKey ck = Console.ReadKey(true).Key;
             if (ck == ConsoleKey.UpArrow) if (cursor_y - 1 >= 0) cursor_y--;
             if (ck == ConsoleKey.DownArrow) if (cursor_y + 1 < meret) cursor_y++;
@@ -236,18 +236,18 @@ namespace minesweeper
             if (ck == ConsoleKey.RightArrow) if (cursor_x + 1 < meret) cursor_x++;
             if (ck == flag)
             {
-                if (visible[CurTop, CurLeft] == "flag")
+                if (visible[cursor_y, cursor_x] == "flag")
                 {
-                    visible[CurTop, CurLeft] = "false";
+                    visible[cursor_y, cursor_x] = "false";
                     flagcount--;
                     Console.BackgroundColor = ConsoleColor.DarkBlue;
                     Console.Write(fedes);
                     Console.ResetColor();
                     Nyeres_Ellenorzes(akna, visible);
                 }
-                else if (visible[CurTop, CurLeft] == "false")
+                else if (visible[cursor_y, cursor_x] == "false")
                 {
-                    visible[CurTop, CurLeft] = "flag";
+                    visible[cursor_y, cursor_x] = "flag";
                     flagcount++;
                     Console.BackgroundColor = ConsoleColor.DarkBlue;
                     Console.ForegroundColor = ConsoleColor.DarkMagenta;
@@ -324,6 +324,11 @@ namespace minesweeper
                 gameover_type = "flagged";
             }
         }
+        /// <summary>
+        /// A kezdő hely kiválasztása és "aknamentes generálás"
+        /// </summary>
+        /// <param name="akna"></param>
+        /// <param name="visible"></param>
         static void Start(string[,] akna, ref string[,] visible)
         {
             Console.Title = $"Aknakereső - {meret} x {meret} - {aknakszama} aknával";
@@ -394,6 +399,9 @@ namespace minesweeper
             Nyeres_Ellenorzes(akna, visible);
             Draw(akna, visible, true);
         }
+        /// <summary>
+        /// Játék belső változóinak alaphelyzetbe állítása
+        /// </summary>
         static void Reset()
         {
             gameover = false;
@@ -401,10 +409,15 @@ namespace minesweeper
             flagcount = 0;
             cursor_x = 0;
             cursor_y = 0;
+            Console.SetCursorPosition(0, 0);
             Console.Clear();
         }
+        /// <summary>
+        /// A Menü megjelenítése és használata
+        /// </summary>
         static void Menu()
         {
+            Reset();
             int max;
             bool siker = false;
             do
@@ -515,6 +528,9 @@ namespace minesweeper
 
             } while (!siker);
         }
+        /// <summary>
+        /// Aknakkereső ASCII kiírása
+        /// </summary>
         static void Title()
         {
             Console.WriteLine(@"
