@@ -1,4 +1,5 @@
 
+<html>
 <body>
   <pre>
     _    _                _                        ____ 
@@ -10,8 +11,15 @@
   <br>
   <b><h1>Aknakereső konzolalkalmazás</h1></b>
   Támogatott platformok: Windows<br>
-  Támogatott Windows verziók: 7: tesztkörnyezet konfigurálása folyamatban, 8: tesztelés alatt, <b>10: teljes</b>, <a href = "https://github.com/vgeri108/minesweeper/issues/4">11: megjelenítési problémák a nagyításnál.</a><br>
-  A Linux és Mac verzió még hibás.<br>
+  Támogatott Windows verziók:
+ <ul>
+    <li>Windows 7: A használathoz telepíteni kell a .NET-et (.NET 4.8-on tesztelve)</li>
+    <li>Windows 8: Tesztelés alatt</li>
+    <li><strong>Windows 10: Teljes</strong></li>
+    <li><a href="https://github.com/vgeri108/minesweeper/issues/4">Windows 11: Megjelenítési problémák a nagyításnál</a></li>
+  </ul>
+  A Linux verzió egyenlőre nem támogatott!<br>
+  MacOS verzió még nincs tervezve.<br>
   <br>
   <b><h2>Irányítás</h2></b>
   Kurzor mozgatás: nyílgombok<br>
