@@ -11,12 +11,12 @@
   <br>
   <b><h1>Aknakereső konzolalkalmazás</h1></b>
   Támogatott platformok: Windows<br>
-  Támogatott Windows verziók:
+  Kompatibilitás Windows verziók:
  <ul>
     <li>Windows 7: A használathoz telepíteni kell a .NET-et (.NET 4.8-on tesztelve)</li>
-    <li>Windows 8: Tesztelés alatt</li>
+    <li>Windows 8: Eddigi tesztek szerint <b>teljes</b></li>
     <li><strong>Windows 10: Teljes</strong></li>
-    <li><a href="https://github.com/vgeri108/minesweeper/issues/4">Windows 11: Megjelenítési problémák a nagyításnál</a></li>
+    <li><a href="https://github.com/vgeri108/minesweeper/issues/4">Windows 11: Megjelenítési problémák a nagyításnál,</a> de <b>teljes</b></li>
   </ul>
   A Linux verzió egyenlőre nem támogatott!<br>
   MacOS verzió még nincs tervezve.<br>
