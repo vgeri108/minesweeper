@@ -1,3 +1,11 @@
-Aknakereső
+--==## Aknakereső ##==--
 
-Verzió: Relase 1.4.2
+Verzió: Beta 1.4.3
+
+!!! FIGYELEM: Béta verzió !!!
+Hibák fordulhatnak elő!
+Hibabejelentés itt: https://github.com/vgeri108/minesweeper/issues/
+
+----Frissítések----
+ ==> A pálya szélességét és magasságát külön lehet állítani.
+ ==> A program a jobb egérgomb megnyomásakor nem fog meghibásodni.
