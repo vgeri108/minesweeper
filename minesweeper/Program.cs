@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 
 namespace minesweeper
 {
@@ -10,31 +11,59 @@ namespace minesweeper
         static string zaszlo = "!";
         static string fedes = "-";
         static int aknakszama = 0;
-        static int meret = 0;
+        static int meretM = 0;
+        static int meretSZ = 0;
         static int flagcount = 0;
         static int cursor_x = 0;
         static int cursor_y = 0;
+        static int margin = 2; //az az érték, hogy mennyi hely legyen a játéktábla mellett
         static ConsoleKey dig = ConsoleKey.W;
         static ConsoleKey flag = ConsoleKey.Spacebar;
         static ConsoleKey quit = ConsoleKey.Escape;
         static bool gameover = false;
         static string gameover_type = "false";
         static bool newgame = true;
+
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetStdHandle(int nStdHandle);
+        [DllImport("kernel32.dll")]
+        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+        [DllImport("kernel32.dll")]
+        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+        const int STD_INPUT_HANDLE = -10;
+        const uint ENABLE_QUICK_EDIT_MODE = 0x0040;
+        const uint ENABLE_INSERT_MODE = 0x0020;
+        const uint ENABLE_MOUSE_INPUT = 0x0010;
+
+
         static void Main(string[] args)
         {
+            try
+            {
+                IntPtr handle = GetStdHandle(STD_INPUT_HANDLE);
+                if (GetConsoleMode(handle, out uint mode))
+                {
+                    mode &= ~ENABLE_QUICK_EDIT_MODE;
+                    mode &= ~ENABLE_INSERT_MODE;
+                    mode &= ~ENABLE_MOUSE_INPUT;
+                    SetConsoleMode(handle, mode);
+                }
+            }
+            catch { }
             do
             {
-                Console.Title = "Aknakereső - Relase 1.4.2 - Új játék létrehozása";
+                Console.Title = "Aknakereső - Beta 1.4.3 - Új játék létrehozása";
                 Menu();
-                string[,] akna = new string[meret, meret];
-                string[,] visible = new string[meret, meret];
+                string[,] akna = new string[meretM, meretSZ];
+                string[,] visible = new string[meretM, meretSZ];
                 Console.Clear();
                 Console.Title = "Aknakereső - Játék generálása...";
                 Start(akna, ref visible);
                 Console.SetCursorPosition(cursor_x, cursor_y);
-                Console.Title = $"Aknakereső - {meret} x {meret} - {aknakszama} aknával";
+                Console.Title = $"Aknakereső - {meretM} x {meretSZ} - {aknakszama} aknával";
                 do { Select(akna, ref visible); } while (!gameover);
-                Console.SetCursorPosition(0, meret + 1);
+                Console.SetCursorPosition(0, meretM + 1);
                 switch (gameover_type)
                 {
                     case "akna": Console.WriteLine("Aknát találtál, ezért felrobbantál!"); break;
@@ -53,9 +82,9 @@ namespace minesweeper
         static string[,] akna_letrehozas(ref string[,] akna, ref string[,] visible)
         {
             Random random = new Random();
-            for (int i = 0; i < akna.GetLength(1); i++)
+            for (int i = 0; i < akna.GetLength(0); i++)
             {
-                for (int j = 0; j < akna.GetLength(0); j++)
+                for (int j = 0; j < akna.GetLength(1); j++)
                 {
                     akna[i, j] = semmi;
                     visible[i, j] = "false";
@@ -66,8 +95,8 @@ namespace minesweeper
                 int x, y;
                 do
                 {
-                    x = random.Next(0, meret);
-                    y = random.Next(0, meret);
+                    x = random.Next(0, meretM);
+                    y = random.Next(0, meretSZ);
                 } while ((akna[x, y] != semmi) || (x == cursor_y && y == cursor_x));
                 akna[x, y] = minemark;
             }
@@ -100,23 +129,23 @@ namespace minesweeper
                         {
                             if (akna[x - 1, y - 1] == minemark) count++;
                         }
-                        if (x + 1 < meret) //le
+                        if (x + 1 < meretM) //le
                         {
                             if (akna[x + 1, y] == minemark) count++;
                         }
-                        if (((x - 1 >= 0) && (y + 1 < meret))) //jobbra fel
+                        if (((x - 1 >= 0) && (y + 1 < meretSZ))) //jobbra fel
                         {
                             if (akna[x - 1, y + 1] == minemark) count++;
                         }
-                        if (y + 1 < meret) //jobbra
+                        if (y + 1 < meretSZ) //jobbra
                         {
                             if (akna[x, y + 1] == minemark) count++;
                         }
-                        if ((y - 1 >= 0) && (x + 1 < meret)) //balra le
+                        if ((y - 1 >= 0) && (x + 1 < meretM)) //balra le
                         {
                             if (akna[x + 1, y - 1] == minemark) count++;
                         }
-                        if ((y + 1 < meret) && (x + 1 < meret)) //jobbra le
+                        if ((y + 1 < meretSZ) && (x + 1 < meretM)) //jobbra le
                         {
                             if (akna[x + 1, y + 1] == minemark) count++;
                         }
@@ -153,9 +182,9 @@ namespace minesweeper
                 //Console.Clear();
                 Console.SetCursorPosition(0, 0);
             }
-            for (int i = 0; i < akna.GetLength(1); i++)
+            for (int i = 0; i < akna.GetLength(0); i++)
             {
-                for (int j = 0; j < akna.GetLength(0); j++)
+                for (int j = 0; j < akna.GetLength(1); j++)
                 {
                     if (visible[i, j] == "true")
                     {
@@ -231,9 +260,9 @@ namespace minesweeper
             int CurLeft = Convert.ToInt32(cur.Left);*/
             ConsoleKey ck = Console.ReadKey(true).Key;
             if (ck == ConsoleKey.UpArrow) if (cursor_y - 1 >= 0) cursor_y--;
-            if (ck == ConsoleKey.DownArrow) if (cursor_y + 1 < meret) cursor_y++;
+            if (ck == ConsoleKey.DownArrow) if (cursor_y + 1 < meretM) cursor_y++;
             if (ck == ConsoleKey.LeftArrow) if (cursor_x - 1 >= 0) cursor_x--;
-            if (ck == ConsoleKey.RightArrow) if (cursor_x + 1 < meret) cursor_x++;
+            if (ck == ConsoleKey.RightArrow) if (cursor_x + 1 < meretSZ) cursor_x++;
             if (ck == flag)
             {
                 if (visible[cursor_y, cursor_x] == "flag")
@@ -277,7 +306,7 @@ namespace minesweeper
         /// <param name="visible"></param>
         static void Felfedes(string[,] akna, ref string[,] visible, int x, int y)
         {
-            if (x < 0 || x >= meret || y < 0 || y >= meret) return;
+            if (x < 0 || x >= meretM || y < 0 || y >= meretSZ) return;
             if (visible[x, y] == "true" || visible[x, y] == "flag") return;
             visible[x, y] = "true";
             if (akna[x, y] == semmi)
@@ -304,7 +333,7 @@ namespace minesweeper
         /// <param name="visible"></param>
         static void Nyeres_Ellenorzes(string[,] akna, string[,] visible)
         {
-            Console.Title = $"Aknakereső - {meret} x {meret} - {aknakszama} aknával - Hátra van még: {aknakszama - flagcount}";
+            Console.Title = $"Aknakereső - {meretM} x {meretSZ} - {aknakszama} aknával - Hátra van még: {aknakszama - flagcount}";
             for (int x = 0; x < akna.GetLength(0); x++)
             {
                 for (int y = 0; y < akna.GetLength(1); y++)
@@ -331,12 +360,12 @@ namespace minesweeper
         /// <param name="visible"></param>
         static void Start(string[,] akna, ref string[,] visible)
         {
-            Console.Title = $"Aknakereső - {meret} x {meret} - {aknakszama} aknával";
+            Console.Title = $"Aknakereső - {meretM} x {meretSZ} - {aknakszama} aknával";
             Console.SetCursorPosition(0, 0);
             Console.BackgroundColor = ConsoleColor.DarkBlue;
-            for (int i = 0; i < akna.GetLength(1); i++)
+            for (int i = 0; i < akna.GetLength(0); i++)
             {
-                for (int j = 0; j < akna.GetLength(0); j++)
+                for (int j = 0; j < akna.GetLength(1); j++)
                 {
                     Console.Write(fedes);
                 }
@@ -352,9 +381,9 @@ namespace minesweeper
                 int CurTop = Convert.ToInt32(cur.Top);
                 int CurLeft = Convert.ToInt32(cur.Left);
                 if (ck == ConsoleKey.UpArrow) if (cursor_y - 1 >= 0) cursor_y--;
-                if (ck == ConsoleKey.DownArrow) if (cursor_y + 1 < meret) cursor_y++;
+                if (ck == ConsoleKey.DownArrow) if (cursor_y + 1 < meretM) cursor_y++;
                 if (ck == ConsoleKey.LeftArrow) if (cursor_x - 1 >= 0) cursor_x--;
-                if (ck == ConsoleKey.RightArrow) if (cursor_x + 1 < meret) cursor_x++;
+                if (ck == ConsoleKey.RightArrow) if (cursor_x + 1 < meretSZ) cursor_x++;
                 Console.SetCursorPosition(cursor_x, cursor_y);
             } while (ck != dig);
             /*do
@@ -425,7 +454,7 @@ namespace minesweeper
                 string[] options = {
                     "Könnyű (9x9, 10 akna)",
                     "Közepes (16x16, 40 akna)",
-                    "Nehéz (24x24, 99 akna)",
+                    "Nehéz (16x30, 99 akna)",
                     "Egyedi pálya",
                     "Kilépés"
                 };
@@ -434,7 +463,7 @@ namespace minesweeper
                 do
                 {
                     Console.Clear();
-                    Title();
+                    ASCII();
                     Console.WriteLine("Válassz nehézségi szintet:");
                     for (int i = 0; i < options.Length; i++)
                     {
@@ -455,41 +484,62 @@ namespace minesweeper
                 switch (selected)
                 {
                     case 0:
-                        meret = 9;
+                        meretM = 9;
+                        meretSZ = 9;
                         aknakszama = 10;
                         break;
                     case 1:
-                        meret = 16;
+                        meretM = 16;
+                        meretSZ = 16;
                         aknakszama = 40;
                         break;
                     case 2:
-                        meret = 24;
+                        meretM = 16;
+                        meretSZ = 30;
                         aknakszama = 99;
                         break;
                     case 3:
-                        bool converted;
+                        bool converted = false;
                         do
                         {
                             converted = false;
-                            Console.Write("Méret: ");
-                            converted = int.TryParse(Console.ReadLine(), out meret);
-                            max = Console.WindowHeight;
-                            if (Console.WindowWidth < max) max = Console.WindowWidth;
+                            Console.Write("Szélesség: ");
+                            converted = int.TryParse(Console.ReadLine(), out meretSZ);
+                            max = Console.WindowWidth;
                             if (!converted)
                             {
                                 Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
                             }
-                            else if (meret < 2)
+                            else if (meretSZ < 2)
                             {
                                 Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
                             }
-                            else if (meret > max - 3)
+                            else if (meretSZ > max - margin)
                             {
                                 Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
                             }
-                        } while (!(converted && meret < max - 2 && meret > 1));
+                        } while (!(converted && meretSZ < Console.WindowWidth - margin && meretSZ > 1));
+                        do
+                        {
+                            converted = false;
+                            Console.Write("Magasság: ");
+                            converted = int.TryParse(Console.ReadLine(), out meretM);
+                            max = Console.WindowHeight;
+                            if (!converted)
+                            {
+                                Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
+                            }
+                            else if (meretM < 2)
+                            {
+                                Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
+                            }
+                            else if (meretM > max - margin)
+                            {
+                                Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
+                            }
+                        } while (!(converted && meretM < Console.WindowHeight - margin && meretM > 1));
 
-                        max = (meret * meret) - 1;
+                        max = (meretM * meretSZ) - 1;
                         do
                         {
                             converted = false;
@@ -514,9 +564,7 @@ namespace minesweeper
                         Environment.Exit(0);
                     break;
                 }
-                max = Console.WindowHeight;
-                if (Console.WindowWidth < max - 3) max = Console.WindowWidth;
-                if (meret < max)
+                if (meretM < Console.WindowHeight-margin && meretSZ < Console.WindowWidth-margin)
                 {
                     siker = true;
                 }
@@ -531,7 +579,7 @@ namespace minesweeper
         /// <summary>
         /// Aknakkereső ASCII kiírása
         /// </summary>
-        static void Title()
+        static void ASCII()
         {
             Console.WriteLine(@"
     _    _                _                        ____
