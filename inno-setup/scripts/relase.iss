@@ -2,10 +2,12 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Aknakereső"
-#define MyAppVersion "Beta 1.4.4"
+#define MyAppVersion "Beta 1.5"
 #define MyAppPublisher "vgeri108"
 #define MyAppURL "https://github.com/vgeri108/minesweeper"
 #define MyAppExeName "minesweeper.exe"
+#define username "laszl"
+#define type "vs-beta"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -30,12 +32,12 @@ ArchitecturesAllowed=x64compatible
 ; the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64compatible
 DisableProgramGroupPage=yes
-InfoBeforeFile=C:\Users\Geri\source\repos\minesweeper\inno-setup\info\info.txt
+InfoBeforeFile=C:\Users\{#username}\source\repos\minesweeper\inno-setup\info\info.txt
 ; Remove the following line to run in administrative install mode (install for all users).
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline
 OutputBaseFilename=minesweeper_setup
-SetupIconFile=C:\Users\Geri\source\repos\minesweeper\inno-setup\images\setup.ico
+SetupIconFile=C:\Users\{#username}\source\repos\minesweeper\inno-setup\images\setup.ico
 SolidCompression=yes
 WizardStyle=modern
 
@@ -46,7 +48,7 @@ Name: "hungarian"; MessagesFile: "compiler:Languages\Hungarian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Geri\source\repos\minesweeper\vs-builds\windows\vs-beta\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\{#username}\source\repos\minesweeper\vs-builds\windows\{#type}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

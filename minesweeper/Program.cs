@@ -7,7 +7,7 @@ namespace minesweeper
 {
     internal class Program
     {
-        const string Version = "Beta 1.4.4";
+        const string Version = "Beta 1.5";
         
         static string minemark = "*";
         static string semmi = " ";
@@ -19,8 +19,8 @@ namespace minesweeper
         static int flagcount = 0;
         static int cursor_x = 0;
         static int cursor_y = 0;
-        static int marginDown = 4; //az az érték, hogy mennyi hely legyen a játéktábla alatt
-        static int marginRight = 0;
+        static int marginDown = 5; //az az érték, hogy mennyi hely legyen a játéktábla alatt
+        static int marginRight = 1;
         static ConsoleKey dig = ConsoleKey.W;
         static ConsoleKey flag = ConsoleKey.Spacebar;
         static ConsoleKey quit = ConsoleKey.Escape;
@@ -243,6 +243,7 @@ namespace minesweeper
             }
             Console.SetCursorPosition(0, meretM + 3);
             Console.Write("           ");
+            Status();
             Console.CursorVisible = true;
         }
         /// <summary>
@@ -326,6 +327,7 @@ namespace minesweeper
         static void Nyeres_Ellenorzes(string[,] akna, string[,] visible)
         {
             Console.Title = "Aknakereső - Játék";
+            Status();
             for (int x = 0; x < akna.GetLength(0); x++)
             {
                 for (int y = 0; y < akna.GetLength(1); y++)
@@ -606,7 +608,11 @@ namespace minesweeper
         static void Status()
         {
             Console.SetCursorPosition(0, meretM + 1);
+            Console.WriteLine("                       ");
+            Console.SetCursorPosition(0, meretM + 1);
             Console.WriteLine("Hátralévő aknák: " + (aknakszama - flagcount));
+            Console.Write("               ");
+            Console.SetCursorPosition(0, meretM + 2);
             Console.WriteLine("Méret: " + meretSZ + " × " + meretM);
         }
     }
