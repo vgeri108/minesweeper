@@ -11,7 +11,7 @@ Az aknakeresőm telepítése Windows 7 re már nehezebb feladat. Itt vannak a l�
 
 > ⚠️ Nagyon régi Windows 7 verziókat offline Windows update fájlokkal kell frisíteni, amiket [innen](https://www.catalog.update.microsoft.com/Home.aspx) kell letölteni, de már nem elmlékszemmelyikeket
 
-## [Telepítő](../inno-setup/scripts/output/minesweeper_setup.exe) letöltése
+## [Telepítő](../inno-setup/scripts/Output/minesweeper_setup.exe) letöltése
 ## Windows Update ellenőrzése
 - Keress frissítéseket a Windows Update ban
 - Ha van frissítés telepítsd, majd indítsd újra a géped!

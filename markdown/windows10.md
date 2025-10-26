@@ -7,5 +7,5 @@
 ```
 # Aknakereső telepítése Windows 10-re
 
-Töltsd le a [telepítőt](inno-setup/scripts/output/minesweeper_setup.exe) vagy közvetlenül az _.exe_ fájlt.\
+Töltsd le a [telepítőt](inno-setup/scripts/Output/minesweeper_setup.exe) vagy közvetlenül az _.exe_ fájlt.\
 Futtasd a programot és már játszhatsz is!
