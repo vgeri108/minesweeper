@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.Design;
+﻿using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace minesweeper
 {
     internal class Program
     {
-        const string Version = "Beta 1.5";
+        const string Version = "Debug 1.6";
         
         static string minemark = "*";
         static string semmi = " ";
@@ -27,6 +29,7 @@ namespace minesweeper
         static bool gameover = false;
         static string gameover_type = "false";
         static bool newgame = true;
+        static bool settings_opened = false;
 
         static ConsoleColor default_Background = ConsoleColor.Black;
         static ConsoleColor default_Foreground = ConsoleColor.White;
@@ -88,7 +91,10 @@ namespace minesweeper
             do
             {
                 Console.Title = "Aknakereső - Új";
-                Menu();
+                do
+                {
+                    Menu();
+                } while (settings_opened);
                 string[,] akna = new string[meretM, meretSZ];
                 string[,] visible = new string[meretM, meretSZ];
                 Console.Clear();
@@ -433,6 +439,7 @@ namespace minesweeper
         /// </summary>
         static void Menu()
         {
+            settings_opened = false;
             Console.CursorVisible = false;
             Reset();
             int max;
@@ -444,6 +451,7 @@ namespace minesweeper
                     "Közepes (16x16, 40 akna)",
                     "Nehéz (16x30, 99 akna)",
                     "Egyedi pálya",
+                    "Beállítésok",
                     "Kilépés"
                 };
                 int selected = 0;
@@ -468,7 +476,6 @@ namespace minesweeper
                     else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
                         selected++;
                 } while (key != ConsoleKey.Enter);
-
                 switch (selected)
                 {
                     case 0:
@@ -552,9 +559,13 @@ namespace minesweeper
                         siker = true;
                     break;
                     case 4:
+                        Settings();
+                    break;
+                    case 5:
                         Environment.Exit(0);
                     break;
                 }
+                if (settings_opened) break;
                 if (meretM <= Console.WindowHeight-marginDown && meretSZ <= Console.WindowWidth-marginRight)
                 {
                     siker = true;
@@ -614,6 +625,68 @@ namespace minesweeper
             Console.Write("               ");
             Console.SetCursorPosition(0, meretM + 2);
             Console.WriteLine("Méret: " + meretSZ + " × " + meretM);
+        }
+        static void Settings()
+        {
+            settings_opened = true;
+            string[] options = {
+                    "Színek módosítása",
+                    "Irányítás módosítása",
+                    "Jelölések módosítása",
+                    "Vissza"
+                };
+            int selected = 0;
+            ConsoleKey key;
+            do
+            {
+                Console.Clear();
+                ASCII();
+                Console.WriteLine("Beállítások (beta):");
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selected)
+                        Console.Write("> ");
+                    else
+                        Console.Write("  ");
+                    Console.WriteLine(options[i]);
+                }
+
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.UpArrow && selected > 0)
+                    selected--;
+                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                    selected++;
+            } while (key != ConsoleKey.Enter);
+            switch (selected)
+            {
+                case 0:
+                    Beállítások.Színek();
+                break;
+                case 1:
+                    Beállítások.Irányítás();
+                break;
+                case 2:
+                    Beállítások.Jelölések();
+                break;
+            }
+
+            Console.ReadKey();
+
+        }
+    }
+    class Beállítások
+    {
+        public static void Színek()
+        {
+
+        }
+        public static void Irányítás()
+        {
+
+        }
+        public static void Jelölések()
+        {
+
         }
     }
 }
