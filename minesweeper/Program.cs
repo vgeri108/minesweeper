@@ -2,19 +2,20 @@
 using System.ComponentModel.Design;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
 namespace minesweeper
 {
-    internal class Program
+    public class Program
     {
         const string Version = "Debug 1.6";
         
-        static string minemark = "*";
-        static string semmi = " ";
-        static string zaszlo = "!";
-        static string fedes = "-";
+        public static string minemark = "*";
+        public static string semmi = " ";
+        public static string zaszlo = "!";
+        public static string fedes = "-";
         static int aknakszama = 0;
         static int meretM = 0;
         static int meretSZ = 0;
@@ -33,7 +34,7 @@ namespace minesweeper
 
         static ConsoleColor default_Background = ConsoleColor.Black;
         static ConsoleColor default_Foreground = ConsoleColor.White;
-        static Dictionary<string, ConsoleColor> Szín_Betű = new Dictionary<string, ConsoleColor>()
+        public static Dictionary<string, ConsoleColor> Szín_Betű = new Dictionary<string, ConsoleColor>()
         {
             {"1", ConsoleColor.Blue},
             {"2", ConsoleColor.DarkGreen},
@@ -44,10 +45,10 @@ namespace minesweeper
             {"7", ConsoleColor.DarkMagenta},
             {"8", ConsoleColor.Magenta},
             {minemark, default_Foreground},
-            {"flag", ConsoleColor.White},
+            {zaszlo, ConsoleColor.White},
             {fedes, ConsoleColor.Blue}
         };
-        static Dictionary<string, ConsoleColor> Szín_Háttér = new Dictionary<string, ConsoleColor>()
+        public static Dictionary<string, ConsoleColor> Szín_Háttér = new Dictionary<string, ConsoleColor>()
         {
             {"1", default_Background},
             {"2", default_Background},
@@ -58,7 +59,7 @@ namespace minesweeper
             {"7", default_Background},
             {"8", default_Background},
             {minemark, ConsoleColor.Red},
-            {"flag", ConsoleColor.DarkBlue},
+            {zaszlo, ConsoleColor.DarkBlue},
             {fedes, ConsoleColor.DarkBlue}
         };
 
@@ -242,7 +243,7 @@ namespace minesweeper
                     }
                     else if (visible[i, j] == "flag")
                     {
-                        Paint("flag", "visible");
+                        Paint(zaszlo, "visible");
                     }
                 }
                 Console.WriteLine();
@@ -280,7 +281,7 @@ namespace minesweeper
                 {
                     visible[cursor_y, cursor_x] = "flag";
                     flagcount++;
-                    Paint("flag", "visible");
+                    Paint(zaszlo, "visible");
                     //Draw(akna, visible, true);
                     Nyeres_Ellenorzes(akna, visible);
                 }
@@ -451,7 +452,7 @@ namespace minesweeper
                     "Közepes (16x16, 40 akna)",
                     "Nehéz (16x30, 99 akna)",
                     "Egyedi pálya",
-                    "Beállítésok",
+                    "Beállítások",
                     "Kilépés"
                 };
                 int selected = 0;
@@ -508,7 +509,7 @@ namespace minesweeper
                             }
                             else if (meretSZ < 2)
                             {
-                                Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
+                                Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kevesebb!");
                             }
                             else if (meretSZ > max - marginRight)
                             {
@@ -528,7 +529,7 @@ namespace minesweeper
                             }
                             else if (meretM < 2)
                             {
-                                Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kisebb!");
+                                Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kevesebb!");
                             }
                             else if (meretM > max - marginDown)
                             {
@@ -582,7 +583,7 @@ namespace minesweeper
         /// <summary>
         /// Aknakkereső ASCII kiírása
         /// </summary>
-        static void ASCII()
+        public static void ASCII()
         {
             Console.WriteLine(@"
     _    _                _                        ____
@@ -605,7 +606,7 @@ namespace minesweeper
                 }else
                 if (from == "visible")
                 {
-                    if (write == "flag")
+                    if (write == zaszlo)
                     {
                         Console.Write(zaszlo);
                     }
@@ -640,7 +641,7 @@ namespace minesweeper
             do
             {
                 Console.Clear();
-                ASCII();
+                Program.ASCII();
                 Console.WriteLine("Beállítások (beta):");
                 for (int i = 0; i < options.Length; i++)
                 {
@@ -669,17 +670,142 @@ namespace minesweeper
                     Beállítások.Jelölések();
                 break;
             }
-
-            Console.ReadKey();
-
         }
     }
     class Beállítások
     {
         public static void Színek()
         {
+            string[] options = {
+                    "Hátter színek módosítása",
+                    "Betűszínek módosítása",
+                    "Vissza"
+                };
+            int selected = 0;
+            ConsoleKey key;
+            do
+            {
+                Console.Clear();
+                Program.ASCII();
+                Console.WriteLine("Szín beállítások:");
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selected)
+                        Console.Write("> ");
+                    else
+                        Console.Write("  ");
+                    Console.WriteLine(options[i]);
+                }
+
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.UpArrow && selected > 0)
+                    selected--;
+                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                    selected++;
+            } while (key != ConsoleKey.Enter);
+            switch (selected)
+            {
+                case 0: Beállítások.Hátterek(); break;
+                case 1: Beállítások.Betűszín(); break;
+            }
+        }
+        public static void Hátterek()
+        {
+            string[] options = {
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    Program.minemark,
+                    Program.zaszlo,
+                    Program.fedes,
+                };
+            int selected = 0;
+            ConsoleKey key;
+            ConsoleColor[] colorsVektor = (ConsoleColor[])Enum.GetValues(typeof(ConsoleColor));
+            List<ConsoleColor> colors = colorsVektor.ToList();
+            int[] selected_color = new int[options.Length];
+            bool first = true;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("--==## Háttérszín ##==--");
+                Console.WriteLine();
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selected)
+                    {
+                        Console.Write("> ");
+                    }
+                    else
+                    {
+                        Console.Write("  ");
+                    }
+                    int id = i + 1;
+                    if (Program.Szín_Betű.ContainsKey(options[i])) Console.ForegroundColor = Program.Szín_Betű[options[i]];
+                    if (first)
+                    {
+                        if (Program.Szín_Háttér.ContainsKey(options[i]))
+                        {
+                            Console.BackgroundColor = Program.Szín_Háttér[options[i]];
+                            selected_color[i] = colors.IndexOf(Program.Szín_Háttér[options[i]]);
+                        }
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = colors[selected_color[i]];
+                    }
+                    Console.WriteLine(options[i]);
+                    Console.ResetColor();
+                }
+                first = false;
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.UpArrow && selected > 0)
+                    selected--;
+                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                    selected++;
+                else if (key == ConsoleKey.LeftArrow)
+                {
+                    if (selected_color[selected] - 1 > -1)
+                    {
+                        selected_color[selected]--;
+                    }
+                    else
+                    {
+                        selected_color[selected] = colors.Count - 1;
+                    }
+                }
+                else if (key == ConsoleKey.RightArrow)
+                {
+                    if (selected_color[selected] + 1 != colors.Count)
+                    {
+                        selected_color[selected]++;
+                    }
+                    else
+                    {
+                        selected_color[selected] = 0;
+                    }
+                }
+                else if (key == ConsoleKey.Enter)
+                {
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        Program.Szín_Háttér[options[i]] = colors[selected_color[i]];
+                    }
+                    break;
+                }
+                else if (key == ConsoleKey.Escape) break;
+            } while (key != ConsoleKey.Enter);
+        }
+        public static void Betűszín()
+        {
 
         }
+
         public static void Irányítás()
         {
 
