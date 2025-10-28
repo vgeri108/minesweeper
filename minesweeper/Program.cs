@@ -1,6 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.ExceptionServices;
@@ -14,7 +16,10 @@ namespace minesweeper
         const string Version_type = "Debug";
         const string Version_Prefix = "1";
         const string Version_Suffix = "6.1";
-        
+
+        public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
+        public static string github_version = "NotSet";
+
         public static string minemark = "*";
         public static string semmi = " ";
         public static string zaszlo = "!";
@@ -81,6 +86,21 @@ namespace minesweeper
         const uint ENABLE_INSERT_MODE = 0x0020;
         const uint ENABLE_MOUSE_INPUT = 0x0010;
 
+        static bool VanInternet()
+        {
+            try
+            {
+                using (var ping = new Ping())
+                {
+                    PingReply reply = ping.Send("8.8.8.8", 500);
+                    return reply.Status == IPStatus.Success;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         static void Main(string[] args)
         {
@@ -96,9 +116,23 @@ namespace minesweeper
                 }
             }
             catch { }
+
+            if (VanInternet())
+            {
+                try
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        string content = client.GetStringAsync("https://raw.githubusercontent.com/vgeri108/minesweeper/refs/heads/master/minesweeper/version.txt").Result;
+                        List<string> sorok = new List<string>(content.Split('\n'));
+                        github_version = $"{sorok[0]} {sorok[1]}.{sorok[2]}";
+                    }
+                }
+                catch (Exception) { github_version = "error"; }
+            }
+
             do
             {
-                Console.Title = "Aknakereső - Új";
                 do
                 {
                     Menu();
@@ -598,7 +632,7 @@ namespace minesweeper
   / _ \ | |/ / '_ \ / _` | |/ / _ \ '__/ _ \/ __|/ _ \ 
  / ___ \|   <| | | | (_| |   <  __/ | |  __/\__ \ |_| |
 /_/   \_\_|\_\_| |_|\__,_|_|\_\___|_|  \___||___/\___/ ");
-            Console.WriteLine($"\n{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}\n");
+            Console.WriteLine($"\n{local_version}\n");
         }
         static void Paint(string write, string from)
         {
@@ -640,7 +674,6 @@ namespace minesweeper
             string[] options = {
                     "Színek módosítása",
                     "Irányítás módosítása",
-                    "Jelölések módosítása",
                     "Vissza"
                 };
             int selected = 0;
@@ -672,9 +705,6 @@ namespace minesweeper
                 break;
                 case 1:
                     Beállítások.Irányítás.Irányítás_Menü();
-                break;
-                case 2:
-                    Beállítások.Jelölések.Jelölések_Menü();
                 break;
             }
         }
@@ -965,104 +995,20 @@ namespace minesweeper
                 }
             }
         }
-        public class Jelölések
+    }
+    class Update
+    {
+        public static void Check()
         {
-            public static void Jelölések_Menü()
-            {
-                string[] options = {
-                    "Zászló jelölés módosítása",
-                    "Fedés jelölés módosítása",
-                    "Akna jelölés módosítása",
-                    "Vissza"
-                };
-                int selected = 0;
-                ConsoleKey key;
-                do
-                {
-                    Console.Clear();
-                    Program.ASCII();
-                    Console.WriteLine("Jelölés beállítások:");
-                    for (int i = 0; i < options.Length; i++)
-                    {
-                        if (i == selected)
-                            Console.Write("> ");
-                        else
-                            Console.Write("  ");
-                        Console.WriteLine(options[i]);
-                    }
 
-                    key = Console.ReadKey(true).Key;
-                    if (key == ConsoleKey.UpArrow && selected > 0)
-                        selected--;
-                    else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
-                        selected++;
-                } while (key != ConsoleKey.Enter);
-                switch (selected)
-                {
-                    case 0: Beállítások.Jelölések.Zászló(); break;
-                    case 1: Beállítások.Jelölések.Fedés(); break;
-                    case 2: Beállítások.Jelölések.Akna(); break;
-                }
-            }
-            public static void Akna()
-            {
-                Console.Clear();
-                Console.WriteLine("Akna jelölés módosítása");
-                Console.WriteLine("Eddig ez a karakter volt használva: " + Program.minemark);
-                Console.WriteLine();
-                Console.WriteLine("[Escape] a félbeszakításhoz");
-                ConsoleKeyInfo readed = Console.ReadKey();
-                if (readed.Key != ConsoleKey.Escape)
-                {
-                    ConsoleColor előző = Program.Szín_Betű[Program.minemark];
-                    Program.Szín_Betű.Add(Convert.ToString(readed.KeyChar), előző);
-                    előző = Program.Szín_Háttér[Program.minemark];
-                    Program.Szín_Háttér.Add(Convert.ToString(readed.KeyChar), előző);
-                    Program.minemark = Convert.ToString(readed.KeyChar);
-                }
-            }
-            public static void Zászló()
-            {
-                Console.Clear();
-                Console.WriteLine("Zászló jelölés módosítása");
-                Console.WriteLine("Eddig ez a karakter volt használva: " + Program.zaszlo);
-                Console.WriteLine();
-                Console.WriteLine("[Escape] a félbeszakításhoz");
-                ConsoleKeyInfo readed = Console.ReadKey();
-                if (readed.Key != ConsoleKey.Escape)
-                {
-                    ConsoleColor előző = Program.Szín_Betű[Program.zaszlo];
-                    Program.Szín_Betű.Add(Convert.ToString(readed.KeyChar), előző);
-                    előző = Program.Szín_Háttér[Program.zaszlo];
-                    Program.Szín_Háttér.Add(Convert.ToString(readed.KeyChar), előző);
-                    Program.zaszlo = Convert.ToString(readed.KeyChar);
-                }
-            }
-            public static void Fedés()
-            {
-                Console.Clear();
-                Console.WriteLine("Fedés jelölés módosítása");
-                Console.WriteLine("Eddig ez a karakter volt használva: " + Program.fedes);
-                Console.WriteLine();
-                Console.WriteLine("[Escape] a félbeszakításhoz");
-                ConsoleKeyInfo readed = Console.ReadKey();
-                if (readed.Key != ConsoleKey.Escape && !Program.nemlehet.Contains(Convert.ToString(readed.KeyChar)))
-                {
-                    ConsoleColor előző = Program.Szín_Betű[Program.fedes];
-                    Program.Szín_Betű.Add(Convert.ToString(readed.KeyChar), előző);
-                    előző = Program.Szín_Háttér[Program.fedes];
-                    Program.Szín_Háttér.Add(Convert.ToString(readed.KeyChar), előző);
-                    Program.fedes = Convert.ToString(readed.KeyChar);
-                }
-                else
-                {
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nA megadott karaktert nem lehet beállítani!");
-                    Console.ResetColor();
-                    Thread.Sleep(1000);
-                }
-            }
+        }
+        public static void Install()
+        {
+
+        }
+        public static void Kérdez()
+        {
+
         }
     }
 }
