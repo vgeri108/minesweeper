@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Globalization;
+using System.Net.Security;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
@@ -34,6 +35,10 @@ namespace minesweeper
         static bool newgame = true;
         static bool settings_opened = false;
 
+        public static string[] nemlehet = new string[]
+               {
+                   Program.minemark, Program.zaszlo, Program.fedes, "", " ", "1", "2", "3", "4", "5", "6", "7", "8"
+               };
         static ConsoleColor default_Background = ConsoleColor.Black;
         static ConsoleColor default_Foreground = ConsoleColor.White;
         public static Dictionary<string, ConsoleColor> Szín_Betű = new Dictionary<string, ConsoleColor>()
@@ -1041,13 +1046,21 @@ namespace minesweeper
                 Console.WriteLine();
                 Console.WriteLine("[Escape] a félbeszakításhoz");
                 ConsoleKeyInfo readed = Console.ReadKey();
-                if (readed.Key != ConsoleKey.Escape)
+                if (readed.Key != ConsoleKey.Escape && !Program.nemlehet.Contains(Convert.ToString(readed.KeyChar)))
                 {
                     ConsoleColor előző = Program.Szín_Betű[Program.fedes];
                     Program.Szín_Betű.Add(Convert.ToString(readed.KeyChar), előző);
                     előző = Program.Szín_Háttér[Program.fedes];
                     Program.Szín_Háttér.Add(Convert.ToString(readed.KeyChar), előző);
                     Program.fedes = Convert.ToString(readed.KeyChar);
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nA megadott karaktert nem lehet beállítani!");
+                    Console.ResetColor();
+                    Thread.Sleep(1000);
                 }
             }
         }
