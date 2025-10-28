@@ -10,7 +10,9 @@ namespace minesweeper
 {
     public class Program
     {
-        const string Version = "Debug 1.6";
+        const string Version_type = "Debug";
+        const string Version_Prefix = "1";
+        const string Version_Suffix = "6.1";
         
         public static string minemark = "*";
         public static string semmi = " ";
@@ -24,8 +26,8 @@ namespace minesweeper
         static int cursor_y = 0;
         static int marginDown = 5; //az az érték, hogy mennyi hely legyen a játéktábla alatt
         static int marginRight = 1;
-        static ConsoleKey dig = ConsoleKey.W;
-        static ConsoleKey flag = ConsoleKey.Spacebar;
+        public static ConsoleKey dig = ConsoleKey.W;
+        public static ConsoleKey flag = ConsoleKey.Spacebar;
         static ConsoleKey quit = ConsoleKey.Escape;
         static bool gameover = false;
         static string gameover_type = "false";
@@ -591,7 +593,7 @@ namespace minesweeper
   / _ \ | |/ / '_ \ / _` | |/ / _ \ '__/ _ \/ __|/ _ \ 
  / ___ \|   <| | | | (_| |   <  __/ | |  __/\__ \ |_| |
 /_/   \_\_|\_\_| |_|\__,_|_|\_\___|_|  \___||___/\___/ ");
-            Console.WriteLine("\n"+Version+"\n");
+            Console.WriteLine($"\n{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}\n");
         }
         static void Paint(string write, string from)
         {
@@ -664,10 +666,10 @@ namespace minesweeper
                     Beállítások.Színek();
                 break;
                 case 1:
-                    Beállítások.Irányítás();
+                    Beállítások.Irányítás.Irányítás_Menü();
                 break;
                 case 2:
-                    Beállítások.Jelölések();
+                    Beállítások.Jelölések.Jelölések_Menü();
                 break;
             }
         }
@@ -801,18 +803,253 @@ namespace minesweeper
                 else if (key == ConsoleKey.Escape) break;
             } while (key != ConsoleKey.Enter);
         }
+
         public static void Betűszín()
         {
-
+            string[] options = {
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    Program.minemark,
+                    Program.zaszlo,
+                    Program.fedes,
+                };
+            int selected = 0;
+            ConsoleKey key;
+            ConsoleColor[] colorsVektor = (ConsoleColor[])Enum.GetValues(typeof(ConsoleColor));
+            List<ConsoleColor> colors = colorsVektor.ToList();
+            int[] selected_color = new int[options.Length];
+            bool first = true;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("--==## Betűszín ##==--");
+                Console.WriteLine();
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selected)
+                    {
+                        Console.Write("> ");
+                    }
+                    else
+                    {
+                        Console.Write("  ");
+                    }
+                    int id = i + 1;
+                    if (Program.Szín_Háttér.ContainsKey(options[i])) Console.BackgroundColor = Program.Szín_Háttér[options[i]];
+                    if (first)
+                    {
+                        if (Program.Szín_Háttér.ContainsKey(options[i]))
+                        {
+                            Console.ForegroundColor = Program.Szín_Betű[options[i]];
+                            selected_color[i] = colors.IndexOf(Program.Szín_Betű[options[i]]);
+                        }
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = colors[selected_color[i]];
+                    }
+                    Console.WriteLine(options[i]);
+                    Console.ResetColor();
+                }
+                first = false;
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.UpArrow && selected > 0)
+                    selected--;
+                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                    selected++;
+                else if (key == ConsoleKey.LeftArrow)
+                {
+                    if (selected_color[selected] - 1 > -1)
+                    {
+                        selected_color[selected]--;
+                    }
+                    else
+                    {
+                        selected_color[selected] = colors.Count - 1;
+                    }
+                }
+                else if (key == ConsoleKey.RightArrow)
+                {
+                    if (selected_color[selected] + 1 != colors.Count)
+                    {
+                        selected_color[selected]++;
+                    }
+                    else
+                    {
+                        selected_color[selected] = 0;
+                    }
+                }
+                else if (key == ConsoleKey.Enter)
+                {
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        Program.Szín_Betű[options[i]] = colors[selected_color[i]];
+                    }
+                    break;
+                }
+                else if (key == ConsoleKey.Escape) break;
+            } while (key != ConsoleKey.Enter);
         }
-
-        public static void Irányítás()
+        public class Irányítás
         {
+            public static void Irányítás_Menü()
+            {
+                string[] options = {
+                    "Ásás billentyű módosítás",
+                    "Zászlózás billentyű módosítás",
+                    "Vissza"
+                };
+                int selected = 0;
+                ConsoleKey key;
+                do
+                {
+                    Console.Clear();
+                    Program.ASCII();
+                    Console.WriteLine("Irányítás beállítások:");
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        if (i == selected)
+                            Console.Write("> ");
+                        else
+                            Console.Write("  ");
+                        Console.WriteLine(options[i]);
+                    }
 
+                    key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.UpArrow && selected > 0)
+                        selected--;
+                    else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                        selected++;
+                } while (key != ConsoleKey.Enter);
+                switch (selected)
+                {
+                    case 0: Beállítások.Irányítás.Dig(); break;
+                    case 1: Beállítások.Irányítás.Flag(); break;
+                }
+            }
+            public static void Dig()
+            {
+                Console.Clear();
+                Console.WriteLine("Ásás billentyű módosítása");
+                Console.WriteLine("Eddig ez a gomb volt használva: " + Program.dig);
+                Console.WriteLine();
+                Console.WriteLine("[Escape] a félbeszakításhoz");
+                ConsoleKey readed = Console.ReadKey().Key;
+                if (readed != ConsoleKey.Escape)
+                {
+                    Program.dig = readed;
+                }
+            }
+            public static void Flag()
+            {
+                Console.Clear();
+                Console.WriteLine("Zászló billentyű módosítása");
+                Console.WriteLine("Eddig ez a gomb volt használva: " + Program.flag);
+                Console.WriteLine();
+                Console.WriteLine("[Escape] a félbeszakításhoz");
+                ConsoleKey readed = Console.ReadKey().Key;
+                if (readed != ConsoleKey.Escape)
+                {
+                    Program.flag = readed;
+                }
+            }
         }
-        public static void Jelölések()
+        public class Jelölések
         {
+            public static void Jelölések_Menü()
+            {
+                string[] options = {
+                    "Zászló jelölés módosítása",
+                    "Fedés jelölés módosítása",
+                    "Akna jelölés módosítása",
+                    "Vissza"
+                };
+                int selected = 0;
+                ConsoleKey key;
+                do
+                {
+                    Console.Clear();
+                    Program.ASCII();
+                    Console.WriteLine("Jelölés beállítások:");
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        if (i == selected)
+                            Console.Write("> ");
+                        else
+                            Console.Write("  ");
+                        Console.WriteLine(options[i]);
+                    }
 
+                    key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.UpArrow && selected > 0)
+                        selected--;
+                    else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                        selected++;
+                } while (key != ConsoleKey.Enter);
+                switch (selected)
+                {
+                    case 0: Beállítások.Jelölések.Zászló(); break;
+                    case 1: Beállítások.Jelölések.Fedés(); break;
+                    case 2: Beállítások.Jelölések.Akna(); break;
+                }
+            }
+            public static void Akna()
+            {
+                Console.Clear();
+                Console.WriteLine("Akna jelölés módosítása");
+                Console.WriteLine("Eddig ez a karakter volt használva: " + Program.minemark);
+                Console.WriteLine();
+                Console.WriteLine("[Escape] a félbeszakításhoz");
+                ConsoleKeyInfo readed = Console.ReadKey();
+                if (readed.Key != ConsoleKey.Escape)
+                {
+                    ConsoleColor előző = Program.Szín_Betű[Program.minemark];
+                    Program.Szín_Betű.Add(Convert.ToString(readed.KeyChar), előző);
+                    előző = Program.Szín_Háttér[Program.minemark];
+                    Program.Szín_Háttér.Add(Convert.ToString(readed.KeyChar), előző);
+                    Program.minemark = Convert.ToString(readed.KeyChar);
+                }
+            }
+            public static void Zászló()
+            {
+                Console.Clear();
+                Console.WriteLine("Zászló jelölés módosítása");
+                Console.WriteLine("Eddig ez a karakter volt használva: " + Program.zaszlo);
+                Console.WriteLine();
+                Console.WriteLine("[Escape] a félbeszakításhoz");
+                ConsoleKeyInfo readed = Console.ReadKey();
+                if (readed.Key != ConsoleKey.Escape)
+                {
+                    ConsoleColor előző = Program.Szín_Betű[Program.zaszlo];
+                    Program.Szín_Betű.Add(Convert.ToString(readed.KeyChar), előző);
+                    előző = Program.Szín_Háttér[Program.zaszlo];
+                    Program.Szín_Háttér.Add(Convert.ToString(readed.KeyChar), előző);
+                    Program.zaszlo = Convert.ToString(readed.KeyChar);
+                }
+            }
+            public static void Fedés()
+            {
+                Console.Clear();
+                Console.WriteLine("Fedés jelölés módosítása");
+                Console.WriteLine("Eddig ez a karakter volt használva: " + Program.fedes);
+                Console.WriteLine();
+                Console.WriteLine("[Escape] a félbeszakításhoz");
+                ConsoleKeyInfo readed = Console.ReadKey();
+                if (readed.Key != ConsoleKey.Escape)
+                {
+                    ConsoleColor előző = Program.Szín_Betű[Program.fedes];
+                    Program.Szín_Betű.Add(Convert.ToString(readed.KeyChar), előző);
+                    előző = Program.Szín_Háttér[Program.fedes];
+                    Program.Szín_Háttér.Add(Convert.ToString(readed.KeyChar), előző);
+                    Program.fedes = Convert.ToString(readed.KeyChar);
+                }
+            }
         }
     }
 }
