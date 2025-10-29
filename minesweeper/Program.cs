@@ -16,7 +16,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1";
-        public const string Version_Suffix = "6.1";
+        public const string Version_Suffix = "6.2";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -119,10 +119,14 @@ namespace minesweeper
             }
             catch { }
 
+            Console.Title = "Frissítések keresése...";
+            Update.Check();
+            Console.Title = "Aknakereső - Frissítés";
+            if (frissités_elérhető) Update.Kérdez();
             
-
             do
             {
+                Console.Title = "Aknakereső";
                 do
                 {
                     Menu();
@@ -999,54 +1003,51 @@ namespace minesweeper
                         string content = client.GetStringAsync("https://raw.githubusercontent.com/vgeri108/minesweeper/refs/heads/master/minesweeper/version.txt").Result;
                         List<string> sorok = new List<string>(content.Split('\n'));
                         Program.github_version = $"{sorok[0]} {sorok[1]}.{sorok[2]}";
-                        Program.frissités_elérhető = (Program.local_version == Program.github_version);
+                        Program.frissités_elérhető = !(Program.local_version == Program.github_version);
                     }
                 }
-                catch (Exception) { Program.github_version = "error"; }
+                catch (Exception) { }
             }
         }
         public static void Install()
         {
+            Console.Clear();
             string url = "https://github.com/vgeri108/minesweeper/raw/refs/heads/master/inno-setup/scripts/Output/minesweeper_setup.exe";
             string filePath = Path.Combine(Environment.CurrentDirectory, "minesweeper_setup.exe");
             try
             {
-                Console.WriteLine("Fájl letöltése folyamatban...");
+                Console.WriteLine("\nFájl letöltése folyamatban...");
                 using (HttpClient client = new HttpClient())
                 {
                     byte[] data = client.GetByteArrayAsync(url).Result;
                     File.WriteAllBytes(filePath, data);
                 }
 
-                Console.WriteLine($"✅ Sikeres letöltés: {filePath}");
+                Console.WriteLine($"A letöltés sikeresen befejeződött!");
                 Console.Write("\nSzeretnéd elindítani a telepítőt? (i/n): ");
-                string valasz = Console.ReadLine()?.Trim().ToLower();
 
-                if (valasz == "i")
+                char answer = Console.ReadKey(true).KeyChar;
+                if (answer == 'i')
                 {
-                    Console.WriteLine("Telepítő indítása...");
+                    Console.WriteLine("\nTelepítő indítása...");
                     Process.Start(new ProcessStartInfo()
                     {
                         FileName = filePath,
                         UseShellExecute = true
                     });
                 }
-                else
-                {
-                    Console.WriteLine("Telepítő futtatása kihagyva.");
-                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"⚠️ Hiba történt: {ex.Message}");
+                Console.WriteLine($"Hiba történt: {ex.Message}");
             }
         }
         public static void Kérdez()
         {
             Console.Clear();
             Console.WriteLine($"\nEgy frissítés érhető el: {Program.github_version}.");
-            Console.WriteLine("Szeretnéd telepíteni? (I/N)");
-            char answer = Console.ReadKey().KeyChar;
+            Console.WriteLine("Szeretnéd letölteni? (i/n)");
+            char answer = Console.ReadKey(true).KeyChar;
             if (answer == 'i')
             {
                 Install();
