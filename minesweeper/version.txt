@@ -1,6 +1,6 @@
 Debug
 1
-6.1
+6.2
 Beállítások menü.
 https://github.com/vgeri108/minesweeper/releases/tag/vB1.4.4
 //Ez a fájl az új verzió ellenőrzéséhez szükséges.

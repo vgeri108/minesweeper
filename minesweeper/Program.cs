@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net.NetworkInformation;
 using System.Net.Security;
@@ -13,12 +14,13 @@ namespace minesweeper
 {
     public class Program
     {
-        const string Version_type = "Debug";
-        const string Version_Prefix = "1";
-        const string Version_Suffix = "6.1";
+        public const string Version_type = "Debug";
+        public const string Version_Prefix = "1";
+        public const string Version_Suffix = "6.1";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
+        public static bool frissités_elérhető = false;
 
         public static string minemark = "*";
         public static string semmi = " ";
@@ -86,7 +88,7 @@ namespace minesweeper
         const uint ENABLE_INSERT_MODE = 0x0020;
         const uint ENABLE_MOUSE_INPUT = 0x0010;
 
-        static bool VanInternet()
+        public static bool VanInternet()
         {
             try
             {
@@ -117,19 +119,7 @@ namespace minesweeper
             }
             catch { }
 
-            if (VanInternet())
-            {
-                try
-                {
-                    using (HttpClient client = new HttpClient())
-                    {
-                        string content = client.GetStringAsync("https://raw.githubusercontent.com/vgeri108/minesweeper/refs/heads/master/minesweeper/version.txt").Result;
-                        List<string> sorok = new List<string>(content.Split('\n'));
-                        github_version = $"{sorok[0]} {sorok[1]}.{sorok[2]}";
-                    }
-                }
-                catch (Exception) { github_version = "error"; }
-            }
+            
 
             do
             {
@@ -1000,15 +990,67 @@ namespace minesweeper
     {
         public static void Check()
         {
-
+            if (Program.VanInternet())
+            {
+                try
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        string content = client.GetStringAsync("https://raw.githubusercontent.com/vgeri108/minesweeper/refs/heads/master/minesweeper/version.txt").Result;
+                        List<string> sorok = new List<string>(content.Split('\n'));
+                        Program.github_version = $"{sorok[0]} {sorok[1]}.{sorok[2]}";
+                        Program.frissités_elérhető = (Program.local_version == Program.github_version);
+                    }
+                }
+                catch (Exception) { Program.github_version = "error"; }
+            }
         }
         public static void Install()
         {
+            string url = "https://github.com/vgeri108/minesweeper/raw/refs/heads/master/inno-setup/scripts/Output/minesweeper_setup.exe";
+            string filePath = Path.Combine(Environment.CurrentDirectory, "minesweeper_setup.exe");
+            try
+            {
+                Console.WriteLine("Fájl letöltése folyamatban...");
+                using (HttpClient client = new HttpClient())
+                {
+                    byte[] data = client.GetByteArrayAsync(url).Result;
+                    File.WriteAllBytes(filePath, data);
+                }
 
+                Console.WriteLine($"✅ Sikeres letöltés: {filePath}");
+                Console.Write("\nSzeretnéd elindítani a telepítőt? (i/n): ");
+                string valasz = Console.ReadLine()?.Trim().ToLower();
+
+                if (valasz == "i")
+                {
+                    Console.WriteLine("Telepítő indítása...");
+                    Process.Start(new ProcessStartInfo()
+                    {
+                        FileName = filePath,
+                        UseShellExecute = true
+                    });
+                }
+                else
+                {
+                    Console.WriteLine("Telepítő futtatása kihagyva.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ Hiba történt: {ex.Message}");
+            }
         }
         public static void Kérdez()
         {
-
+            Console.Clear();
+            Console.WriteLine($"\nEgy frissítés érhető el: {Program.github_version}.");
+            Console.WriteLine("Szeretnéd telepíteni? (I/N)");
+            char answer = Console.ReadKey().KeyChar;
+            if (answer == 'i')
+            {
+                Install();
+            }
         }
     }
 }
