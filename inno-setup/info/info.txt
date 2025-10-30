@@ -1,6 +1,6 @@
 --==## Aknakereső ##==--
 
-Verzió: Beta 1.5
+Verzió: Beta 1.6.3
 
 !!! FIGYELEM: Béta verzió !!!
 Hibák fordulhatnak elő!
@@ -9,7 +9,5 @@ Hibabejelentés itt: https://github.com/vgeri108/minesweeper/issues/
 
 ----Frissítések----
 Játékbeli módosítások:
- => Margók minden irányban nagyobbak lettek (Issue #8, #10 closed)
- => A hátralévő aknák kiírás frissül (Issue #9 closed)
-Forráskódbeli módosítások:
- => Státus sor megjelenítése
+ => Pályán lévő elemek színe állítható
+ => Frissítés ellenőrzések

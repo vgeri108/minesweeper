@@ -14,9 +14,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Debug";
+        public const string Version_type = "Beta";
         public const string Version_Prefix = "1";
-        public const string Version_Suffix = "6.2";
+        public const string Version_Suffix = "6.3";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -668,6 +668,7 @@ namespace minesweeper
             string[] options = {
                     "Színek módosítása",
                     "Irányítás módosítása",
+                    "Frissítési beállítások",
                     "Vissza"
                 };
             int selected = 0;
@@ -699,6 +700,9 @@ namespace minesweeper
                 break;
                 case 1:
                     Beállítások.Irányítás.Irányítás_Menü();
+                break;
+                case 2:
+                    Beállítások.Frissítés();
                 break;
             }
         }
@@ -987,6 +991,43 @@ namespace minesweeper
                 {
                     Program.flag = readed;
                 }
+            }
+        }
+        public static void Frissítés()
+        {
+            string[] options = {
+                    "Frissítések keresése",
+                    //"Automatikus frissítés és letöltés",
+                    "Vissza"
+                };
+            int selected = 0;
+            ConsoleKey key;
+            do
+            {
+                Console.Clear();
+                Program.ASCII();
+                Console.WriteLine("Frissítés beállítások:");
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selected)
+                        Console.Write("> ");
+                    else
+                        Console.Write("  ");
+                    Console.WriteLine(options[i]);
+                }
+
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.UpArrow && selected > 0)
+                    selected--;
+                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                    selected++;
+            } while (key != ConsoleKey.Enter);
+            switch (selected)
+            {
+                case 0:
+                    Update.Check();
+                    Update.Kérdez();
+                    break;
             }
         }
     }

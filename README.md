@@ -25,7 +25,7 @@ MacOS verzió még nincs tervezve.
 - Mező bezászlózása: `Space`  
 - Kilépés a menübe: `Escape`
 
-A jövőben állítható lesz
+Beta 1.6.3 -tól már álítható a menüben.
 
 ## Hibák
 Itt tudod a hibákat megnézni és új hibát jelenteni: [GitHub Issues](https://github.com/vgeri108/minesweeper/issues)

@@ -1,7 +1,7 @@
-Debug
+Beta
 1
-6.2
-Beállítások menü.
-https://github.com/vgeri108/minesweeper/releases/tag/vB1.4.4
+6.3
+Újítások leírva a GitHubon: github.com/vgeri108/minesweeper
+https://github.com/vgeri108/minesweeper/releases/tag/vB1.6.3
 //Ez a fájl az új verzió ellenőrzéséhez szükséges.
 //Semmi más jelentősége nincs.
