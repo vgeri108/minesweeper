@@ -14,13 +14,17 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Beta";
-        public const string Version_Prefix = "1";
-        public const string Version_Suffix = "6.3";
+        public const string Version_type = "Beta"; //Debug
+        public const string Version_Prefix = "1"; //
+        public const string Version_Suffix = "6.4"; //6.4
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
         public static bool frissités_elérhető = false;
+        public static string frissítés_info = "nincs";
+        public static string frissítés_link = "about:blank";
+        public static bool auto_check = true;
+        public static bool auto_update = false;
 
         public static string minemark = "*";
         public static string semmi = " ";
@@ -32,7 +36,7 @@ namespace minesweeper
         static int flagcount = 0;
         static int cursor_x = 0;
         static int cursor_y = 0;
-        static int marginDown = 5; //az az érték, hogy mennyi hely legyen a játéktábla alatt
+        static int marginDown = 5;
         static int marginRight = 1;
         public static ConsoleKey dig = ConsoleKey.W;
         public static ConsoleKey flag = ConsoleKey.Spacebar;
@@ -119,11 +123,20 @@ namespace minesweeper
             }
             catch { }
 
-            Console.Title = "Frissítések keresése...";
-            Update.Check();
-            Console.Title = "Aknakereső - Frissítés";
-            if (frissités_elérhető) Update.Kérdez();
-            
+            if (auto_check)
+            {
+                Console.Title = "Frissítések keresése...";
+                Update.Check();
+                Console.Title = "Aknakereső - Frissítés";
+                if (frissités_elérhető && !auto_update) Update.Kérdez();
+                else
+                {
+                    Console.WriteLine("Automatikus frissítés folyamatban...");
+                    Update.Install();
+                }
+            }
+
+            MyConfig.Load.Theme();
             do
             {
                 Console.Title = "Aknakereső";
@@ -253,7 +266,7 @@ namespace minesweeper
         /// <param name="akna"></param>
         /// <param name="visible">Ami true az fog látszódni</param>
         /// <param name="clear">Console.Clear() végrehajtása ha true</param>
-        static void Draw(string[,] akna, string[,] visible, bool clear)
+        static void Draw(string[,] akna, string[,] visible, bool clear, bool nincsFedes)
         {
             
             Console.CursorVisible = false;
@@ -272,13 +285,19 @@ namespace minesweeper
                     {
                         Paint(akna[i, j], "akna");
                     }
-                    else if (visible[i, j] == "false")
+                    else
                     {
-                        Paint(fedes, "");
-                    }
-                    else if (visible[i, j] == "flag")
-                    {
-                        Paint(zaszlo, "visible");
+                        if (!nincsFedes)
+                        {
+                            if (visible[i, j] == "false")
+                            {
+                                Paint(fedes, "");
+                            }
+                            else if (visible[i, j] == "flag")
+                            {
+                                Paint(zaszlo, "visible");
+                            }
+                        } else Paint(akna[i, j], "");
                     }
                 }
                 Console.WriteLine();
@@ -317,7 +336,6 @@ namespace minesweeper
                     visible[cursor_y, cursor_x] = "flag";
                     flagcount++;
                     Paint(zaszlo, "visible");
-                    //Draw(akna, visible, true);
                     Nyeres_Ellenorzes(akna, visible);
                 }
             }
@@ -325,7 +343,7 @@ namespace minesweeper
             {
                 Felfedes(akna, ref visible, cursor_y, cursor_x);
                 Nyeres_Ellenorzes(akna, visible);
-                Draw(akna, visible, false);
+                Draw(akna, visible, false, false);
             }
             if (ck == quit)
             {
@@ -333,6 +351,10 @@ namespace minesweeper
                 gameover_type = "quit";
             }
             Console.SetCursorPosition(cursor_x, cursor_y);
+            if (gameover_type == "akna")
+            {
+                Draw(akna, visible, false, true);
+            }
         }
         /// <summary>
         /// Blokk kiütés utáni ellenőrzések
@@ -455,7 +477,7 @@ namespace minesweeper
             }
             Felfedes(akna, ref visible, cursor_y, cursor_x);
             Nyeres_Ellenorzes(akna, visible);
-            Draw(akna, visible, false);
+            Draw(akna, visible, false, false);
         }
         /// <summary>
         /// Játék belső változóinak alaphelyzetbe állítása
@@ -831,6 +853,7 @@ namespace minesweeper
                     {
                         Program.Szín_Háttér[options[i]] = colors[selected_color[i]];
                     }
+                    MyConfig.Save.Theme();
                     break;
                 }
                 else if (key == ConsoleKey.Escape) break;
@@ -997,7 +1020,7 @@ namespace minesweeper
         {
             string[] options = {
                     "Frissítések keresése",
-                    //"Automatikus frissítés és letöltés",
+                    "Automatikus frissítés és letöltés",
                     "Vissza"
                 };
             int selected = 0;
@@ -1028,6 +1051,9 @@ namespace minesweeper
                     Update.Check();
                     Update.Kérdez();
                     break;
+                case 1:
+                    Update.Menü.Főmenü();
+                    break;
             }
         }
     }
@@ -1045,6 +1071,8 @@ namespace minesweeper
                         List<string> sorok = new List<string>(content.Split('\n'));
                         Program.github_version = $"{sorok[0]} {sorok[1]}.{sorok[2]}";
                         Program.frissités_elérhető = !(Program.local_version == Program.github_version);
+                        Program.frissítés_info = sorok[3];
+                        Program.frissítés_link = sorok[4];
                     }
                 }
                 catch (Exception) { }
@@ -1065,10 +1093,21 @@ namespace minesweeper
                 }
 
                 Console.WriteLine($"A letöltés sikeresen befejeződött!");
-                Console.Write("\nSzeretnéd elindítani a telepítőt? (i/n): ");
-
-                char answer = Console.ReadKey(true).KeyChar;
-                if (answer == 'i')
+                if (!Program.auto_update)
+                {
+                    Console.Write("\nSzeretnéd elindítani a telepítőt? (i/n): ");
+                    char answer = Console.ReadKey(true).KeyChar;
+                    if (answer == 'i')
+                    {
+                        Console.WriteLine("\nTelepítő indítása...");
+                        Process.Start(new ProcessStartInfo()
+                        {
+                            FileName = filePath,
+                            UseShellExecute = true
+                        });
+                    }
+                }
+                else
                 {
                     Console.WriteLine("\nTelepítő indítása...");
                     Process.Start(new ProcessStartInfo()
@@ -1086,12 +1125,120 @@ namespace minesweeper
         public static void Kérdez()
         {
             Console.Clear();
-            Console.WriteLine($"\nEgy frissítés érhető el: {Program.github_version}.");
+            Console.WriteLine($"\nEgy frissítés érhető el: {Program.github_version}.\n");
+            Console.WriteLine("Frissítési megjegyzés: " + Program.frissítés_info);
+            Console.WriteLine("Frissítés linke: " + Program.frissítés_link);
+            Console.WriteLine();
             Console.WriteLine("Szeretnéd letölteni? (i/n)");
             char answer = Console.ReadKey(true).KeyChar;
             if (answer == 'i')
             {
                 Install();
+            }
+        }
+        public class Menü
+        {
+            public static void Főmenü()
+            {
+                string[] options = {
+                    "Automtikus frissítés keresések: " + (Program.auto_check ? "Bekapcsolva" : "Kikapcsolva"),
+                    "Automatikus frissítés telepítések: " + (Program.auto_update ? "Bekapcsolva" : "Kikapcsolva"),
+                    "Vissza"
+                };
+                int selected = 0;
+                ConsoleKey key;
+                do
+                {
+                    Console.Clear();
+                    Program.ASCII();
+                    Console.WriteLine("Frissítés beállítások:");
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        if (i == selected)
+                            Console.Write("> ");
+                        else
+                            Console.Write("  ");
+                        Console.WriteLine(options[i]);
+                    }
+
+                    key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.UpArrow && selected > 0)
+                        selected--;
+                    else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                        selected++;
+                } while (key != ConsoleKey.Enter);
+                switch (selected)
+                {
+                    case 0:
+                        Program.auto_check = !Program.auto_check;
+                        Főmenü();
+                        break;
+                    case 1:
+                        Program.auto_update = !Program.auto_update;
+                        Főmenü();
+                        break;
+                }
+            }
+        }
+    }
+    class MyConfig
+    {
+        private static string filePath = "colors.json";
+        public class Save
+        {
+            public static void Settings()
+            {
+
+            }
+            public static void Theme()
+            {
+                var theme = new
+                {
+                    Szín_Háttér = Program.Szín_Háttér.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
+                    Szín_Betű = Program.Szín_Betű.ToDictionary(kv => kv.Key, kv => kv.Value.ToString())
+                };
+                string json = System.Text.Json.JsonSerializer.Serialize(theme, new System.Text.Json.JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                File.WriteAllText(filePath, json);
+            }
+            public static void Game()
+            {
+
+            }
+        }
+        public class Load
+        {
+            public static void Settings()
+            {
+
+            }
+            public static void Theme()
+            {
+                if (!File.Exists(filePath))
+                    return;
+
+                string json = File.ReadAllText(filePath);
+                var theme = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json);
+
+                if (theme != null)
+                {
+                    foreach (var kv in theme["Szín_Háttér"])
+                    {
+                        if (Enum.TryParse(kv.Value, out ConsoleColor color))
+                            Program.Szín_Háttér[kv.Key] = color;
+                    }
+                    foreach (var kv in theme["Szín_Betű"])
+                    {
+                        if (Enum.TryParse(kv.Value, out ConsoleColor color))
+                            Program.Szín_Betű[kv.Key] = color;
+                    }
+                }
+            }
+            public static void Game()
+            {
+
             }
         }
     }
