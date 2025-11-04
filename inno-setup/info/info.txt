@@ -1,6 +1,6 @@
 --==## Aknakereső ##==--
 
-Verzió: Beta 1.6.3
+Verzió: Beta 1.6.4
 
 !!! FIGYELEM: Béta verzió !!!
 Hibák fordulhatnak elő!
@@ -9,5 +9,12 @@ Hibabejelentés itt: https://github.com/vgeri108/minesweeper/issues/
 
 ----Frissítések----
 Játékbeli módosítások:
- => Pályán lévő elemek színe állítható
- => Frissítés ellenőrzések
+ => Robbanáskor az összes akna fel lesz fedve
+ => A beállítások megmaradnak az alkaalmazás bezárása után
+ => Issue #12 javítva: A frissítés keresés menüpont jól működik
+
+Kódbeli módosítások:
+ => Zászló és ásás billentyűkezelés változása
+ => Setup törlése program indításkor, ha nem lehet akkor hibaüzenet latestlog féjlba
+ => Json fájl kiírás
+
