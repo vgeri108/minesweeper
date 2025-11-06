@@ -15,9 +15,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Beta"; //Beta
-        public const string Version_Prefix = "1"; //
-        public const string Version_Suffix = "6.4"; //6.4
+        public const string Version_type = "Debug"; //Debug
+        public const string Version_Prefix = "1"; // latest: Beta 1.6.4
+        public const string Version_Suffix = "6.5"; //6.5
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -366,8 +366,7 @@ namespace minesweeper
             }
             if (ck == quit)
             {
-                gameover = true;
-                gameover_type = "quit";
+                Quit();
             }
             Console.SetCursorPosition(cursor_x, cursor_y);
             if (gameover_type == "akna")
@@ -753,6 +752,43 @@ namespace minesweeper
                 case 2:
                     Beállítások.Frissítés();
                 break;
+            }
+        }
+        /// <summary>
+        /// Escape menü
+        /// </summary>
+        static void Quit()
+        {
+            string[] options = {
+                    "Vissza a játékba",
+                    "Kilépés mentés nélkül",
+                    "Mentés"
+                };
+            int selected = 0;
+            ConsoleKey key;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("\nJáték megállítva:");
+                for (int i = 0; i < options.Length; i++)
+                {
+                    if (i == selected)
+                        Console.Write("> ");
+                    else
+                        Console.Write("  ");
+                    Console.WriteLine(options[i]);
+                }
+
+                key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.UpArrow && selected > 0)
+                    selected--;
+                else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                    selected++;
+            } while (key != ConsoleKey.Enter);
+            switch (selected)
+            {
+                case 0: Beállítások.Hátterek(); break;
+                case 1: Beállítások.Betűszín(); break;
             }
         }
     }

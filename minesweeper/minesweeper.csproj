@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <StartupObject></StartupObject>
+    <EnableJsonSourceGeneration>true</EnableJsonSourceGeneration>
     <ApplicationIcon>minesweeper2.ico</ApplicationIcon>
     <Description>Aknakereső konzolban.</Description>
   </PropertyGroup>
