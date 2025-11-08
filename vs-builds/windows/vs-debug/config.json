@@ -1,0 +1,36 @@
+{
+  "Ir\u00E1ny\u00EDt\u00E1s": {
+    "dig": "W",
+    "flag": "Spacebar"
+  },
+  "UpdateConfig": {
+    "auto_check": "True",
+    "auto_update": "False"
+  },
+  "Sz\u00EDn_H\u00E1tt\u00E9r": {
+    "1": "Black",
+    "2": "Black",
+    "3": "Black",
+    "4": "Black",
+    "5": "Black",
+    "6": "Black",
+    "7": "Black",
+    "8": "Black",
+    "*": "Red",
+    "!": "DarkBlue",
+    "-": "DarkBlue"
+  },
+  "Sz\u00EDn_Bet\u0171": {
+    "1": "Blue",
+    "2": "DarkGreen",
+    "3": "Red",
+    "4": "DarkBlue",
+    "5": "DarkRed",
+    "6": "DarkCyan",
+    "7": "DarkMagenta",
+    "8": "Magenta",
+    "*": "White",
+    "!": "White",
+    "-": "Blue"
+  }
+}

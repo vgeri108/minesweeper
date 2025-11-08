@@ -10,12 +10,13 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Debug"; //Debug
+        public const string Version_type = "Beta"; //Debug
         public const string Version_Prefix = "1"; // latest: Beta 1.6.4
         public const string Version_Suffix = "6.5"; //6.5
 
@@ -1265,6 +1266,11 @@ namespace minesweeper
     class MyConfig
     {
         private static string configPath = "config.json";
+        private static readonly JsonSerializerOptions jsonOptions = new()
+        {
+            WriteIndented = true,
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+        };
 
         public class ConfigData
         {
@@ -1276,7 +1282,7 @@ namespace minesweeper
 
         public static void Save()
         {
-            var config = new
+            var config = new ConfigData
             {
                 Irányítás = Program.Billentyűk.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
                 UpdateConfig = Program.UpdateConfig.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
@@ -1284,7 +1290,7 @@ namespace minesweeper
                 Szín_Betű = Program.Szín_Betű.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
             };
 
-            string json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
+            string json = JsonSerializer.Serialize(config, jsonOptions);
             File.WriteAllText(configPath, json);
         }
 
@@ -1294,7 +1300,7 @@ namespace minesweeper
                 return;
 
             string json = File.ReadAllText(configPath);
-            var config = JsonSerializer.Deserialize<ConfigData>(json);
+            var config = JsonSerializer.Deserialize<ConfigData>(json, jsonOptions);
 
             if (config == null)
                 return;
