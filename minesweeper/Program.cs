@@ -16,8 +16,8 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Beta"; //Debug
-        public const string Version_Prefix = "1"; // latest: Beta 1.6.4
+        public const string Version_type = "Beta"; //Beta
+        public const string Version_Prefix = "1"; // latest: Beta 1.6.5
         public const string Version_Suffix = "6.5"; //6.5
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
@@ -129,6 +129,10 @@ namespace minesweeper
             }
             catch { }
 
+            if (!File.Exists("config.json"))
+            {
+                MyConfig.Save();
+            }
             MyConfig.Load();
 
             if (UpdateConfig["auto_check"])
@@ -367,7 +371,7 @@ namespace minesweeper
             }
             if (ck == quit)
             {
-                Quit();
+                Quit(akna, visible);
             }
             Console.SetCursorPosition(cursor_x, cursor_y);
             if (gameover_type == "akna")
@@ -758,12 +762,12 @@ namespace minesweeper
         /// <summary>
         /// Escape menü
         /// </summary>
-        static void Quit()
+        static void Quit(string[,] akna, string[,] visible)
         {
             string[] options = {
                     "Vissza a játékba",
                     "Kilépés mentés nélkül",
-                    "Mentés"
+                    //"Mentés"
                 };
             int selected = 0;
             ConsoleKey key;
@@ -788,9 +792,16 @@ namespace minesweeper
             } while (key != ConsoleKey.Enter);
             switch (selected)
             {
-                case 0: Beállítások.Hátterek(); break;
-                case 1: Beállítások.Betűszín(); break;
+                case 0: break;
+                case 1:
+                    Program.gameover = true;
+                    Program.gameover_type = "quit";
+                    break;
+                case 2:
+
+                    break;
             }
+            Draw(akna, visible, true, false);
         }
     }
     /// <summary>
@@ -1013,6 +1024,7 @@ namespace minesweeper
                     for (int i = 0; i < options.Length; i++)
                     {
                         Program.Szín_Betű[options[i]] = colors[selected_color[i]];
+                        MyConfig.Save();
                     }
                     break;
                 }
