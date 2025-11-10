@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Aknakereső"
-#define MyAppVersion "Beta 1.6.4"
+#define MyAppVersion "Beta 1.6.5"
 #define MyAppPublisher "vgeri108"
 #define MyAppURL "https://github.com/vgeri108/minesweeper"
 #define MyAppExeName "minesweeper.exe"
