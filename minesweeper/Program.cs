@@ -16,9 +16,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Beta"; //Beta
+        public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.5
-        public const string Version_Suffix = "6.5"; //6.5
+        public const string Version_Suffix = "6.6";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -532,6 +532,7 @@ namespace minesweeper
                     "Közepes (16x16, 40 akna)",
                     "Nehéz (16x30, 99 akna)",
                     "Egyedi pálya",
+                    "Játék betöltése",
                     "Beállítások",
                     "Kilépés"
                 };
@@ -640,9 +641,12 @@ namespace minesweeper
                         siker = true;
                     break;
                     case 4:
-                        Settings();
+                        MyConfig.LoadGame(akna, visible);
                     break;
                     case 5:
+                        Settings();
+                    break;
+                    case 6:
                         Environment.Exit(0);
                     break;
                 }
@@ -766,8 +770,8 @@ namespace minesweeper
         {
             string[] options = {
                     "Vissza a játékba",
-                    "Kilépés mentés nélkül",
-                    //"Mentés"
+                    "Mentés",
+                    "Kilépés mentés nélkül"
                 };
             int selected = 0;
             ConsoleKey key;
@@ -793,12 +797,12 @@ namespace minesweeper
             switch (selected)
             {
                 case 0: break;
-                case 1:
+                case 2:
                     Program.gameover = true;
                     Program.gameover_type = "quit";
                     break;
-                case 2:
-
+                case 1:
+                    MyConfig.SaveGame(akna, visible);
                     break;
             }
             Draw(akna, visible, true, false);
@@ -1291,6 +1295,11 @@ namespace minesweeper
             public Dictionary<string, string> Szín_Háttér { get; set; } = new();
             public Dictionary<string, string> Szín_Betű { get; set; } = new();
         }
+        public class GameData
+        {
+            public Dictionary<string, string> akna { get; set; } = new();
+            public Dictionary<string, string> visible { get; set; } = new();
+        }
 
         public static void Save()
         {
@@ -1339,6 +1348,102 @@ namespace minesweeper
             {
                 if (Enum.TryParse(kv.Value, out ConsoleColor color))
                     Program.Szín_Betű[kv.Key] = color;
+            }
+        }
+        private static string NameSave()
+        {
+            string name;
+            bool ok;
+            Console.Clear();
+            do
+            {
+                ok = true;
+                Console.Write("A mentés neve: ");
+                name = Console.ReadLine()?.Trim() ?? "save";
+                try
+                {
+                    string testPath = name + ".test";
+                    File.Create(testPath).Close();
+                    File.Delete(testPath);
+                }
+                catch (Exception e)
+                {
+                    ok = false;
+                    File.AppendAllText("latestlog.txt", e.Message);
+                    Console.WriteLine("Érvénytelen fájlnév!");
+                }
+                if (File.Exists(name + ".mine"))
+                {
+                    ok = false;
+                    Console.WriteLine("Már létezik ilyen nevű mentés!");
+                }
+
+            } while (!ok);
+
+            return name;
+        }
+        public static void SaveGame(string[,] akna, string[,] visible)
+        {
+            string name = "Save";
+            name = NameSave();
+            var config = new GameData();
+            for (int x = 0; x < akna.GetLength(0); x++)
+            {
+                for (int y = 0; y < akna.GetLength(1); y++)
+                {
+                    config.akna[$"{x},{y}"] = akna[x, y];
+                    config.visible[$"{x},{y}"] = visible[x, y];
+                }
+            }
+
+            string json = JsonSerializer.Serialize(config, jsonOptions);
+            File.WriteAllText($"{name}.mine", json);
+        }
+        private static string NameLoad()
+        {
+            string name;
+            bool ok;
+            Console.Clear();
+            do
+            {
+                ok = true;
+                Console.Write("A mentés neve: ");
+                name = Console.ReadLine()?.Trim() ?? "save";
+                if (!File.Exists(name))
+                {
+                    ok = false;
+                }
+
+            } while (!ok);
+
+            return name;
+        }
+        public static void LoadGame(string[,] akna, string[,] visible)
+        {
+            string name = NameLoad();
+            string path = $"{name}.mine";
+            if (!File.Exists(path))
+                return;
+
+            string json = File.ReadAllText(path);
+            var data = JsonSerializer.Deserialize<GameData>(json, jsonOptions);
+            if (data == null)
+                return;
+
+            foreach (var kv in data.akna)
+            {
+                var parts = kv.Key.Split(',');
+                int x = int.Parse(parts[0]);
+                int y = int.Parse(parts[1]);
+                akna[x, y] = kv.Value;
+            }
+
+            foreach (var kv in data.visible)
+            {
+                var parts = kv.Key.Split(',');
+                int x = int.Parse(parts[0]);
+                int y = int.Parse(parts[1]);
+                visible[x, y] = kv.Value;
             }
         }
     }
