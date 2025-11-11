@@ -28,5 +28,6 @@ Beta 1.6.3 -tól már álítható a menüben.
 Itt tudod a hibákat megnézni és új hibát jelenteni: [GitHub Issues](https://github.com/vgeri108/minesweeper/issues)
 
 ## A következő frissítésben
-Escape menü és játékmentések\
+- Játékmentések
+
 Előzetes, fejlesztés alatt álló buildek letölthetőek [innen](vs-builds/windows/vs-debug/minesweeper.exe).
