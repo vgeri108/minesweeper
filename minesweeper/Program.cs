@@ -56,6 +56,13 @@ namespace minesweeper
         static bool newgame = true;
         static bool settings_opened = false;
 
+        public static string[,] PublicAkna = { };
+        public static string[,] PublicVisible = { };
+        public static int PublicMeretM = 0;
+        public static int PublicMeretSZ = 0;
+        public static int PublicAknakszama = 0;
+        public static bool LoadedGame = false;
+
         static ConsoleColor default_Background = ConsoleColor.Black;
         static ConsoleColor default_Foreground = ConsoleColor.White;
         public static Dictionary<string, ConsoleColor> Szín_Betű = new Dictionary<string, ConsoleColor>()
@@ -168,8 +175,20 @@ namespace minesweeper
                 {
                     Menu();
                 } while (settings_opened);
+                if (LoadedGame)
+                {
+                    meretM = PublicMeretM;
+                    meretSZ = PublicMeretSZ;
+                }
                 string[,] akna = new string[meretM, meretSZ];
                 string[,] visible = new string[meretM, meretSZ];
+                if (LoadedGame)
+                {
+                    akna = PublicAkna;
+                    visible = PublicVisible;
+                    aknakszama = PublicAknakszama;
+                    LoadedGame = false;
+                }
                 Console.Clear();
                 Console.Title = "Aknakereső - Generálás...";
                 Start(akna, ref visible);
@@ -641,7 +660,8 @@ namespace minesweeper
                         siker = true;
                     break;
                     case 4:
-                        MyConfig.LoadGame(akna, visible);
+                        Program.LoadedGame = true;
+                        MyConfig.LoadGame();
                     break;
                     case 5:
                         Settings();
@@ -1299,6 +1319,9 @@ namespace minesweeper
         {
             public Dictionary<string, string> akna { get; set; } = new();
             public Dictionary<string, string> visible { get; set; } = new();
+            public Dictionary<string, string> meretM { get; set; } = new();
+            public Dictionary<string, string> meretSZ { get; set; } = new();
+            public Dictionary<string, string> aknakszama { get; set; } = new();
         }
 
         public static void Save()
@@ -1395,6 +1418,9 @@ namespace minesweeper
                     config.visible[$"{x},{y}"] = visible[x, y];
                 }
             }
+            config.meretM["meretM"] = Program.PublicMeretM.ToString();
+            config.meretSZ["meretSZ"] = Program.PublicMeretSZ.ToString();
+            config.aknakszama["aknakszama"] = Program.PublicAknakszama.ToString();
 
             string json = JsonSerializer.Serialize(config, jsonOptions);
             File.WriteAllText($"{name}.mine", json);
@@ -1409,16 +1435,20 @@ namespace minesweeper
                 ok = true;
                 Console.Write("A mentés neve: ");
                 name = Console.ReadLine()?.Trim() ?? "save";
-                if (!File.Exists(name))
+                if (!File.Exists(name + ".mine"))
                 {
                     ok = false;
+                }
+                else
+                {
+                    Console.WriteLine("A fájl nem létezik!");
                 }
 
             } while (!ok);
 
             return name;
         }
-        public static void LoadGame(string[,] akna, string[,] visible)
+        public static void LoadGame()
         {
             string name = NameLoad();
             string path = $"{name}.mine";
@@ -1430,20 +1460,37 @@ namespace minesweeper
             if (data == null)
                 return;
 
+            foreach (var kv in data.meretM)
+            {
+                Program.PublicMeretM = Convert.ToInt32(kv.Value);
+            }
+
+            foreach (var kv in data.meretSZ)
+            {
+                Program.PublicMeretSZ = Convert.ToInt32(kv.Value);
+            }
+
+            foreach (var kv in data.aknakszama)
+            {
+                Program.PublicAknakszama = Convert.ToInt32(kv.Value);
+            }
+
+            Program.PublicAkna = new string[Program.PublicMeretM, Program.PublicMeretSZ];
             foreach (var kv in data.akna)
             {
                 var parts = kv.Key.Split(',');
                 int x = int.Parse(parts[0]);
                 int y = int.Parse(parts[1]);
-                akna[x, y] = kv.Value;
+                Program.PublicAkna[x, y] = kv.Value;
             }
 
+            Program.PublicVisible = new string[Program.PublicMeretM, Program.PublicMeretSZ];
             foreach (var kv in data.visible)
             {
                 var parts = kv.Key.Split(',');
                 int x = int.Parse(parts[0]);
                 int y = int.Parse(parts[1]);
-                visible[x, y] = kv.Value;
+                Program.PublicVisible[x, y] = kv.Value;
             }
         }
     }
