@@ -61,6 +61,7 @@ namespace minesweeper
         public static int PublicMeretM = 0;
         public static int PublicMeretSZ = 0;
         public static int PublicAknakszama = 0;
+        public static int PublicFlagcount = 0;
         public static bool LoadedGame = false;
 
         static ConsoleColor default_Background = ConsoleColor.Black;
@@ -187,7 +188,7 @@ namespace minesweeper
                     akna = PublicAkna;
                     visible = PublicVisible;
                     aknakszama = PublicAknakszama;
-                    LoadedGame = false;
+                    flagcount = PublicFlagcount;
                 }
                 Console.Clear();
                 Console.Title = "Aknakereső - Generálás...";
@@ -460,64 +461,68 @@ namespace minesweeper
         /// <param name="visible"></param>
         static void Start(string[,] akna, ref string[,] visible)
         {
-            Console.Title = "Aknakereső - Kezdés";
-            Status();
-            Console.SetCursorPosition(0, 0);
-            for (int i = 0; i < akna.GetLength(0); i++)
+            if (!LoadedGame)
             {
-                for (int j = 0; j < akna.GetLength(1); j++)
+                Console.Title = "Aknakereső - Kezdés";
+                Status();
+                Console.SetCursorPosition(0, 0);
+                for (int i = 0; i < akna.GetLength(0); i++)
                 {
-                    Paint(fedes, "");
-                }
-                Console.WriteLine();
-            }
-            Console.ResetColor();
-            Console.SetCursorPosition(0, 0);
-            ConsoleKey ck;
-            do
-            {
-                ck = Console.ReadKey(true).Key;
-                var cur = Console.GetCursorPosition();
-                int CurTop = Convert.ToInt32(cur.Top);
-                int CurLeft = Convert.ToInt32(cur.Left);
-                if (ck == ConsoleKey.UpArrow) if (cursor_y - 1 >= 0) cursor_y--;
-                if (ck == ConsoleKey.DownArrow) if (cursor_y + 1 < meretM) cursor_y++;
-                if (ck == ConsoleKey.LeftArrow) if (cursor_x - 1 >= 0) cursor_x--;
-                if (ck == ConsoleKey.RightArrow) if (cursor_x + 1 < meretSZ) cursor_x++;
-                Console.SetCursorPosition(cursor_x, cursor_y);
-            } while (ck != Billentyűk["dig"]);
-
-            bool vanUres;
-            bool siker = false;
-            for (int tries = 0; tries < 1000 && !siker; tries++)
-            {
-                akna_letrehozas(ref akna, ref visible);
-                Generate(ref akna);
-
-                vanUres = false;
-                for (int x = 0; x < akna.GetLength(0); x++)
-                {
-                    for (int y = 0; y < akna.GetLength(1); y++)
+                    for (int j = 0; j < akna.GetLength(1); j++)
                     {
-                        if (akna[x, y] == semmi)
-                        {
-                            vanUres = true;
-                            break;
-                        }
+                        Paint(fedes, "");
                     }
-                    if (vanUres) break;
+                    Console.WriteLine();
                 }
+                Console.ResetColor();
+                Console.SetCursorPosition(0, 0);
+                ConsoleKey ck;
+                do
+                {
+                    ck = Console.ReadKey(true).Key;
+                    var cur = Console.GetCursorPosition();
+                    int CurTop = Convert.ToInt32(cur.Top);
+                    int CurLeft = Convert.ToInt32(cur.Left);
+                    if (ck == ConsoleKey.UpArrow) if (cursor_y - 1 >= 0) cursor_y--;
+                    if (ck == ConsoleKey.DownArrow) if (cursor_y + 1 < meretM) cursor_y++;
+                    if (ck == ConsoleKey.LeftArrow) if (cursor_x - 1 >= 0) cursor_x--;
+                    if (ck == ConsoleKey.RightArrow) if (cursor_x + 1 < meretSZ) cursor_x++;
+                    Console.SetCursorPosition(cursor_x, cursor_y);
+                } while (ck != Billentyűk["dig"]);
 
-                if (akna[cursor_y, cursor_x] == semmi)
+                bool vanUres;
+                bool siker = false;
+                for (int tries = 0; tries < 1000 && !siker; tries++)
                 {
-                    siker = true;
+                    akna_letrehozas(ref akna, ref visible);
+                    Generate(ref akna);
+
+                    vanUres = false;
+                    for (int x = 0; x < akna.GetLength(0); x++)
+                    {
+                        for (int y = 0; y < akna.GetLength(1); y++)
+                        {
+                            if (akna[x, y] == semmi)
+                            {
+                                vanUres = true;
+                                break;
+                            }
+                        }
+                        if (vanUres) break;
+                    }
+
+                    if (akna[cursor_y, cursor_x] == semmi)
+                    {
+                        siker = true;
+                    }
+                    else if (!vanUres && akna[cursor_y, cursor_x] != minemark)
+                    {
+                        siker = true;
+                    }
                 }
-                else if (!vanUres && akna[cursor_y, cursor_x] != minemark)
-                {
-                    siker = true;
-                }
+                Felfedes(akna, ref visible, cursor_y, cursor_x);
+                LoadedGame = false;
             }
-            Felfedes(akna, ref visible, cursor_y, cursor_x);
             Nyeres_Ellenorzes(akna, visible);
             Draw(akna, visible, false, false);
         }
@@ -822,6 +827,12 @@ namespace minesweeper
                     Program.gameover_type = "quit";
                     break;
                 case 1:
+                    PublicAkna = akna;
+                    PublicVisible = visible;
+                    PublicAknakszama = aknakszama;
+                    PublicMeretM = meretM;
+                    PublicMeretSZ = meretSZ;
+                    PublicFlagcount = flagcount;
                     MyConfig.SaveGame(akna, visible);
                     break;
             }
@@ -1088,8 +1099,16 @@ namespace minesweeper
                 } while (key != ConsoleKey.Enter);
                 switch (selected)
                 {
-                    case 0: Beállítások.Irányítás.Dig(); break;
-                    case 1: Beállítások.Irányítás.Flag(); break;
+                    case 0:
+                        Console.CursorVisible = true;
+                        Beállítások.Irányítás.Dig();
+                        Console.CursorVisible = false;
+                        break;
+                    case 1:
+                        Console.CursorVisible = true;
+                        Beállítások.Irányítás.Flag();
+                        Console.CursorVisible = false;
+                        break;
                 }
             }
             public static void Dig()
@@ -1322,6 +1341,7 @@ namespace minesweeper
             public Dictionary<string, string> meretM { get; set; } = new();
             public Dictionary<string, string> meretSZ { get; set; } = new();
             public Dictionary<string, string> aknakszama { get; set; } = new();
+            public Dictionary<string, string> flagged { get; set; } = new();
         }
 
         public static void Save()
@@ -1375,6 +1395,7 @@ namespace minesweeper
         }
         private static string NameSave()
         {
+            Console.CursorVisible = true;
             string name;
             bool ok;
             Console.Clear();
@@ -1402,7 +1423,7 @@ namespace minesweeper
                 }
 
             } while (!ok);
-
+            Console.CursorVisible = false;
             return name;
         }
         public static void SaveGame(string[,] akna, string[,] visible)
@@ -1421,12 +1442,14 @@ namespace minesweeper
             config.meretM["meretM"] = Program.PublicMeretM.ToString();
             config.meretSZ["meretSZ"] = Program.PublicMeretSZ.ToString();
             config.aknakszama["aknakszama"] = Program.PublicAknakszama.ToString();
+            config.flagged["flagged"] = Program.PublicFlagcount.ToString();
 
             string json = JsonSerializer.Serialize(config, jsonOptions);
             File.WriteAllText($"{name}.mine", json);
         }
         private static string NameLoad()
         {
+            Console.CursorVisible = true;
             string name;
             bool ok;
             Console.Clear();
@@ -1438,14 +1461,10 @@ namespace minesweeper
                 if (!File.Exists(name + ".mine"))
                 {
                     ok = false;
-                }
-                else
-                {
                     Console.WriteLine("A fájl nem létezik!");
                 }
-
             } while (!ok);
-
+            Console.CursorVisible = false;
             return name;
         }
         public static void LoadGame()
@@ -1473,6 +1492,11 @@ namespace minesweeper
             foreach (var kv in data.aknakszama)
             {
                 Program.PublicAknakszama = Convert.ToInt32(kv.Value);
+            }
+
+            foreach (var kv in data.flagged)
+            {
+                Program.PublicFlagcount = Convert.ToInt32(kv.Value);
             }
 
             Program.PublicAkna = new string[Program.PublicMeretM, Program.PublicMeretSZ];
