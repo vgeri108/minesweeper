@@ -18,7 +18,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.5
-        public const string Version_Suffix = "6.6";
+        public const string Version_Suffix = "6.6/2";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -582,6 +582,7 @@ namespace minesweeper
                     else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
                         selected++;
                 } while (key != ConsoleKey.Enter);
+                bool startLoad = false;
                 switch (selected)
                 {
                     case 0:
@@ -665,9 +666,13 @@ namespace minesweeper
                         siker = true;
                     break;
                     case 4:
-                        Program.LoadedGame = true;
+                        startLoad = true;
                         MyConfig.LoadGame();
-                    break;
+                        if (PublicAkna != null && PublicAkna.Length > 0)
+                        {
+                            LoadedGame = true;
+                        }
+                        break;
                     case 5:
                         Settings();
                     break;
@@ -685,7 +690,14 @@ namespace minesweeper
                     Console.WriteLine("A kiválasztott játékterület nem fér ki a képernyőre!");
                     Console.ReadKey(true);
                 }
-
+                if (startLoad)
+                {
+                    if (!LoadedGame)
+                    {
+                        siker = false;
+                    }
+                }
+                startLoad = false;
             } while (!siker);
             Console.CursorVisible = true;
         }
@@ -1402,19 +1414,24 @@ namespace minesweeper
             do
             {
                 ok = true;
+                Console.WriteLine("Játék mentése (\"-\" a visszalépéshez)\n");
                 Console.Write("A mentés neve: ");
                 name = Console.ReadLine()?.Trim() ?? "save";
                 try
                 {
-                    string testPath = name + ".test";
-                    File.Create(testPath).Close();
-                    File.Delete(testPath);
+                    string test = name + ".test";
+                    File.Create(test).Close();
+                    File.Delete(test);
                 }
                 catch (Exception e)
                 {
                     ok = false;
                     File.AppendAllText("latestlog.txt", e.Message);
                     Console.WriteLine("Érvénytelen fájlnév!");
+                }
+                if (name == "-")
+                {
+                    return "-";
                 }
                 if (File.Exists(name + ".mine"))
                 {
@@ -1430,22 +1447,25 @@ namespace minesweeper
         {
             string name = "Save";
             name = NameSave();
-            var config = new GameData();
-            for (int x = 0; x < akna.GetLength(0); x++)
+            if (name != "-")
             {
-                for (int y = 0; y < akna.GetLength(1); y++)
+                var config = new GameData();
+                for (int x = 0; x < akna.GetLength(0); x++)
                 {
-                    config.akna[$"{x},{y}"] = akna[x, y];
-                    config.visible[$"{x},{y}"] = visible[x, y];
+                    for (int y = 0; y < akna.GetLength(1); y++)
+                    {
+                        config.akna[$"{x},{y}"] = akna[x, y];
+                        config.visible[$"{x},{y}"] = visible[x, y];
+                    }
                 }
-            }
-            config.meretM["meretM"] = Program.PublicMeretM.ToString();
-            config.meretSZ["meretSZ"] = Program.PublicMeretSZ.ToString();
-            config.aknakszama["aknakszama"] = Program.PublicAknakszama.ToString();
-            config.flagged["flagged"] = Program.PublicFlagcount.ToString();
+                config.meretM["meretM"] = Program.PublicMeretM.ToString();
+                config.meretSZ["meretSZ"] = Program.PublicMeretSZ.ToString();
+                config.aknakszama["aknakszama"] = Program.PublicAknakszama.ToString();
+                config.flagged["flagged"] = Program.PublicFlagcount.ToString();
 
-            string json = JsonSerializer.Serialize(config, jsonOptions);
-            File.WriteAllText($"{name}.mine", json);
+                string json = JsonSerializer.Serialize(config, jsonOptions);
+                File.WriteAllText($"{name}.mine", json);
+            }
         }
         private static string NameLoad()
         {
@@ -1456,8 +1476,13 @@ namespace minesweeper
             do
             {
                 ok = true;
+                Console.WriteLine("Játék betöltése (\"-\" a visszalépéshez)\n");
                 Console.Write("A mentés neve: ");
                 name = Console.ReadLine()?.Trim() ?? "save";
+                if (name == "-")
+                {
+                    return "-";
+                }
                 if (!File.Exists(name + ".mine"))
                 {
                     ok = false;
@@ -1470,6 +1495,10 @@ namespace minesweeper
         public static void LoadGame()
         {
             string name = NameLoad();
+            if (name == "-")
+            {
+                return;
+            }
             string path = $"{name}.mine";
             if (!File.Exists(path))
                 return;
