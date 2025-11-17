@@ -30,4 +30,5 @@ Itt tudod a hibákat megnézni és új hibát jelenteni: [GitHub Issues](https:/
 ## A következő frissítésben
 - Játékmentések
 
-Előzetes, fejlesztés alatt álló buildek letölthetőek [innen](vs-builds/windows/vs-debug/minesweeper.exe).
+Előzetes, fejlesztés alatt álló buildek letölthetőek [innen](vs-builds/windows/vs-debug/minesweeper.exe).\
+Ezek a buildek nagy hibákat tartalmazhatnak, még az eddig működő funkciókban is!
