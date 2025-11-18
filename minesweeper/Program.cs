@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Net.NetworkInformation;
 using System.Net.Security;
 using System.Runtime.ConstrainedExecution;
@@ -16,9 +17,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Debug";
+        public const string Version_type = "Pre-Build";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.5
-        public const string Version_Suffix = "6.6/2";
+        public const string Version_Suffix = "6.6/3";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -536,6 +537,12 @@ namespace minesweeper
             flagcount = 0;
             cursor_x = 0;
             cursor_y = 0;
+            PublicAknakszama = 0;
+            PublicFlagcount = 0;
+            PublicMeretM = 0;
+            PublicMeretSZ = 0;
+            PublicAkna = new string[0,0];
+            PublicVisible = new string[0,0];
             Console.SetCursorPosition(0, 0);
             Console.Clear();
         }
@@ -668,10 +675,13 @@ namespace minesweeper
                     case 4:
                         startLoad = true;
                         MyConfig.LoadGame();
+                        Console.WriteLine(PublicAkna.Length); //debug
                         if (PublicAkna != null && PublicAkna.Length > 0)
                         {
                             LoadedGame = true;
+                            Console.WriteLine("Loaded game = " + LoadedGame); //debug
                         }
+                        Thread.Sleep(5000);
                         break;
                     case 5:
                         Settings();
@@ -722,7 +732,7 @@ namespace minesweeper
         static void Paint(string write, string from)
         {
             bool van = false;
-            if (Szín_Háttér.ContainsKey(write)) Console.BackgroundColor = Szín_Háttér[write]; van = true;
+            if (Szín_Háttér.ContainsKey(write)) Console.BackgroundColor = Szín_Háttér[write]; van = true; //ex2
             if (Szín_Betű.ContainsKey(write)) Console.ForegroundColor = Szín_Betű[write]; van = true;
             if (van)
             {
@@ -1501,7 +1511,10 @@ namespace minesweeper
             }
             string path = $"{name}.mine";
             if (!File.Exists(path))
+            {
+                Console.WriteLine("File nem létezik"); //debug
                 return;
+            }
 
             string json = File.ReadAllText(path);
             var data = JsonSerializer.Deserialize<GameData>(json, jsonOptions);
@@ -1511,6 +1524,7 @@ namespace minesweeper
             foreach (var kv in data.meretM)
             {
                 Program.PublicMeretM = Convert.ToInt32(kv.Value);
+                Console.WriteLine(Program.PublicMeretM); //debug
             }
 
             foreach (var kv in data.meretSZ)
@@ -1544,6 +1558,16 @@ namespace minesweeper
                 int x = int.Parse(parts[0]);
                 int y = int.Parse(parts[1]);
                 Program.PublicVisible[x, y] = kv.Value;
+            }
+            Console.WriteLine(Program.PublicVisible[0,0]); //debug
+            if (name == "-")
+            {
+                Program.PublicAknakszama = 0;
+                Program.PublicFlagcount = 0;
+                Program.PublicMeretM = 0;
+                Program.PublicMeretSZ = 0;
+                Program.PublicAkna = new string[0, 0];
+                Program.PublicVisible = new string[0, 0];
             }
         }
     }
