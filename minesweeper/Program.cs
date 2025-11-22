@@ -17,9 +17,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Pre-Build";
+        public const string Version_type = "Beta";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.5
-        public const string Version_Suffix = "6.6/3";
+        public const string Version_Suffix = "6.6/4";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -675,13 +675,10 @@ namespace minesweeper
                     case 4:
                         startLoad = true;
                         MyConfig.LoadGame();
-                        Console.WriteLine(PublicAkna.Length); //debug
                         if (PublicAkna != null && PublicAkna.Length > 0)
                         {
                             LoadedGame = true;
-                            Console.WriteLine("Loaded game = " + LoadedGame); //debug
                         }
-                        Thread.Sleep(5000);
                         break;
                     case 5:
                         Settings();
@@ -1358,13 +1355,14 @@ namespace minesweeper
         }
         public class GameData
         {
+            public int meretM { get; set; }
+            public int meretSZ { get; set; }
+            public int aknakszama { get; set; }
+            public int flagged { get; set; }
             public Dictionary<string, string> akna { get; set; } = new();
             public Dictionary<string, string> visible { get; set; } = new();
-            public Dictionary<string, string> meretM { get; set; } = new();
-            public Dictionary<string, string> meretSZ { get; set; } = new();
-            public Dictionary<string, string> aknakszama { get; set; } = new();
-            public Dictionary<string, string> flagged { get; set; } = new();
         }
+
 
         public static void Save()
         {
@@ -1455,28 +1453,28 @@ namespace minesweeper
         }
         public static void SaveGame(string[,] akna, string[,] visible)
         {
-            string name = "Save";
-            name = NameSave();
-            if (name != "-")
+            string name = NameSave();
+            if (name == "-")
+                return;
+            var config = new GameData
             {
-                var config = new GameData();
-                for (int x = 0; x < akna.GetLength(0); x++)
+                meretM = Program.PublicMeretM,
+                meretSZ = Program.PublicMeretSZ,
+                aknakszama = Program.PublicAknakszama,
+                flagged = Program.PublicFlagcount
+            };
+            for (int x = 0; x < akna.GetLength(0); x++)
+            {
+                for (int y = 0; y < akna.GetLength(1); y++)
                 {
-                    for (int y = 0; y < akna.GetLength(1); y++)
-                    {
-                        config.akna[$"{x},{y}"] = akna[x, y];
-                        config.visible[$"{x},{y}"] = visible[x, y];
-                    }
+                    config.akna[$"{x},{y}"] = akna[x, y];
+                    config.visible[$"{x},{y}"] = visible[x, y];
                 }
-                config.meretM["meretM"] = Program.PublicMeretM.ToString();
-                config.meretSZ["meretSZ"] = Program.PublicMeretSZ.ToString();
-                config.aknakszama["aknakszama"] = Program.PublicAknakszama.ToString();
-                config.flagged["flagged"] = Program.PublicFlagcount.ToString();
-
-                string json = JsonSerializer.Serialize(config, jsonOptions);
-                File.WriteAllText($"{name}.mine", json);
             }
+            string json = JsonSerializer.Serialize(config, jsonOptions);
+            File.WriteAllText($"{name}.mine", json);
         }
+
         private static string NameLoad()
         {
             Console.CursorVisible = true;
@@ -1506,69 +1504,50 @@ namespace minesweeper
         {
             string name = NameLoad();
             if (name == "-")
-            {
                 return;
-            }
+
             string path = $"{name}.mine";
             if (!File.Exists(path))
-            {
-                Console.WriteLine("File nem létezik"); //debug
                 return;
-            }
 
             string json = File.ReadAllText(path);
             var data = JsonSerializer.Deserialize<GameData>(json, jsonOptions);
-            if (data == null)
-                return;
+            if (data == null) return;
+            Program.PublicMeretM = data.meretM;
+            Program.PublicMeretSZ = data.meretSZ;
+            Program.PublicAknakszama = data.aknakszama;
+            Program.PublicFlagcount = data.flagged;
+            Program.PublicAkna = new string[data.meretM, data.meretSZ];
+            Program.PublicVisible = new string[data.meretM, data.meretSZ];
 
-            foreach (var kv in data.meretM)
-            {
-                Program.PublicMeretM = Convert.ToInt32(kv.Value);
-                Console.WriteLine(Program.PublicMeretM); //debug
-            }
-
-            foreach (var kv in data.meretSZ)
-            {
-                Program.PublicMeretSZ = Convert.ToInt32(kv.Value);
-            }
-
-            foreach (var kv in data.aknakszama)
-            {
-                Program.PublicAknakszama = Convert.ToInt32(kv.Value);
-            }
-
-            foreach (var kv in data.flagged)
-            {
-                Program.PublicFlagcount = Convert.ToInt32(kv.Value);
-            }
-
-            Program.PublicAkna = new string[Program.PublicMeretM, Program.PublicMeretSZ];
             foreach (var kv in data.akna)
             {
-                var parts = kv.Key.Split(',');
-                int x = int.Parse(parts[0]);
-                int y = int.Parse(parts[1]);
+                var p = kv.Key.Split(',');
+                int x = int.Parse(p[0]);
+                int y = int.Parse(p[1]);
                 Program.PublicAkna[x, y] = kv.Value;
             }
 
-            Program.PublicVisible = new string[Program.PublicMeretM, Program.PublicMeretSZ];
             foreach (var kv in data.visible)
             {
-                var parts = kv.Key.Split(',');
-                int x = int.Parse(parts[0]);
-                int y = int.Parse(parts[1]);
+                var p = kv.Key.Split(',');
+                int x = int.Parse(p[0]);
+                int y = int.Parse(p[1]);
                 Program.PublicVisible[x, y] = kv.Value;
             }
-            Console.WriteLine(Program.PublicVisible[0,0]); //debug
-            if (name == "-")
+
+            for (int x = 0; x < data.meretM; x++)
             {
-                Program.PublicAknakszama = 0;
-                Program.PublicFlagcount = 0;
-                Program.PublicMeretM = 0;
-                Program.PublicMeretSZ = 0;
-                Program.PublicAkna = new string[0, 0];
-                Program.PublicVisible = new string[0, 0];
+                for (int y = 0; y < data.meretSZ; y++)
+                {
+                    if (Program.PublicAkna[x, y] == null)
+                        Program.PublicAkna[x, y] = Program.semmi;
+
+                    if (Program.PublicVisible[x, y] == null)
+                        Program.PublicVisible[x, y] = "false";
+                }
             }
+            Program.LoadedGame = true;
         }
     }
 }

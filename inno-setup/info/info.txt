@@ -1,19 +1,20 @@
 --==## Aknakereső ##==--
 
-Verzió: Beta 1.6.5
+Verzió: Beta 1.6.6(/4)
 
 !!! FIGYELEM: Béta verzió !!!
 Hibák fordulhatnak elő!
 Ha hibát talál kérem jelentse!
 Hibabejelentés itt: https://github.com/vgeri108/minesweeper/issues/
 
+!!! FIGYELEM: .NET szükséges !!!
+A program használatához telepíteni kell a .NET keretrendszert.
+
 ----Frissítések----
 Játékbeli módosítások:
- => Új ikonok
- => Escape menü
- => A konfigurációs fájl működik (Issue #13 javítva)
+ => Kurzor láthatóság módosítva
+ => Játék mentése és betöltése
 
 Kódbeli módosítások:
- => Konfigurációs fájl automatikusan létrejön
- => Felkészülés a játékállás mentésére
+ => Játék változóinak Public láthatósági változata
 
