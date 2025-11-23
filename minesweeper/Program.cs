@@ -19,7 +19,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
-        public const string Version_Suffix = "6.6/5";
+        public const string Version_Suffix = "6.6/6";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -1362,19 +1362,18 @@ namespace minesweeper
             public Dictionary<string, string> Szín_Háttér { get; set; } = new();
             public Dictionary<string, string> Szín_Betű { get; set; } = new();
         }
+
         public class GameData
         {
             public int meretM { get; set; }
             public int meretSZ { get; set; }
-            public int CursorX {  get; set; }
+            public int CursorX { get; set; }
             public int CursorY { get; set; }
             public int aknakszama { get; set; }
             public int flagged { get; set; }
             public Dictionary<string, string> akna { get; set; } = new();
             public Dictionary<string, string> visible { get; set; } = new();
         }
-
-
         public static void Save()
         {
             var config = new ConfigData
@@ -1424,11 +1423,15 @@ namespace minesweeper
                     Program.Szín_Betű[kv.Key] = color;
             }
         }
+
         private static string NameSave()
         {
+            Directory.CreateDirectory("Games");
+
             Console.CursorVisible = true;
             string name;
             bool ok;
+
             Console.Clear();
             do
             {
@@ -1436,37 +1439,42 @@ namespace minesweeper
                 Console.WriteLine("Játék mentése (\"-\" a visszalépéshez)\n");
                 Console.Write("A mentés neve: ");
                 name = Console.ReadLine()?.Trim() ?? "save";
+
                 try
                 {
-                    string test = name + ".test";
+                    string test = $"Games/{name}.test";
                     File.Create(test).Close();
                     File.Delete(test);
                 }
-                catch (Exception e)
+                catch
                 {
                     ok = false;
-                    File.AppendAllText("latestlog.txt", e.Message);
                     Console.WriteLine("Érvénytelen fájlnév!");
                 }
+
                 if (name == "-")
-                {
                     return "-";
-                }
-                if (File.Exists(name + ".mine"))
+
+                if (File.Exists($"Games/{name}.mine"))
                 {
                     ok = false;
                     Console.WriteLine("Már létezik ilyen nevű mentés!");
                 }
 
             } while (!ok);
+
             Console.CursorVisible = false;
             return name;
         }
+
         public static void SaveGame(string[,] akna, string[,] visible)
         {
+            Directory.CreateDirectory("Games");
+
             string name = NameSave();
             if (name == "-")
                 return;
+
             var config = new GameData
             {
                 meretM = Program.PublicMeretM,
@@ -1476,6 +1484,7 @@ namespace minesweeper
                 aknakszama = Program.PublicAknakszama,
                 flagged = Program.PublicFlagcount
             };
+
             for (int x = 0; x < akna.GetLength(0); x++)
             {
                 for (int y = 0; y < akna.GetLength(1); y++)
@@ -1485,7 +1494,7 @@ namespace minesweeper
                 }
             }
             string json = JsonSerializer.Serialize(config, jsonOptions);
-            File.WriteAllText($"{name}.mine", json);
+            File.WriteAllText($"Games/{name}.mine", json);
         }
 
         private static string NameLoad()
@@ -1493,6 +1502,7 @@ namespace minesweeper
             Console.CursorVisible = true;
             string name;
             bool ok;
+
             Console.Clear();
             do
             {
@@ -1500,40 +1510,47 @@ namespace minesweeper
                 Console.WriteLine("Játék betöltése (\"-\" a visszalépéshez)\n");
                 Console.Write("A mentés neve: ");
                 name = Console.ReadLine()?.Trim() ?? "save";
+
                 if (name == "-")
-                {
                     return "-";
-                }
-                if (!File.Exists(name + ".mine"))
+
+                if (!File.Exists($"Games/{name}.mine"))
                 {
                     ok = false;
                     Console.WriteLine("A fájl nem létezik!");
                 }
+
             } while (!ok);
+
             Console.CursorVisible = false;
             return name;
         }
+
         public static void LoadGame()
         {
             string name = NameLoad();
+
             if (name == "-")
             {
                 Program.Reset();
                 return;
             }
-            string path = $"{name}.mine";
+
+            string path = $"Games/{name}.mine";
             if (!File.Exists(path))
                 return;
 
             string json = File.ReadAllText(path);
             var data = JsonSerializer.Deserialize<GameData>(json, jsonOptions);
             if (data == null) return;
+
             Program.PublicMeretM = data.meretM;
             Program.PublicMeretSZ = data.meretSZ;
             Program.PublicCursorX = data.CursorX;
             Program.PublicCursorY = data.CursorY;
             Program.PublicAknakszama = data.aknakszama;
             Program.PublicFlagcount = data.flagged;
+
             Program.PublicAkna = new string[data.meretM, data.meretSZ];
             Program.PublicVisible = new string[data.meretM, data.meretSZ];
 
@@ -1564,6 +1581,7 @@ namespace minesweeper
                         Program.PublicVisible[x, y] = "false";
                 }
             }
+
             Program.LoadedGame = true;
         }
     }
