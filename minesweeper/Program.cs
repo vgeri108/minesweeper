@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using System.Xml.Linq;
 
 namespace minesweeper
 {
@@ -19,7 +20,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
-        public const string Version_Suffix = "6.6/7";
+        public const string Version_Suffix = "6.6/8";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -66,6 +67,7 @@ namespace minesweeper
         public static int PublicCursorX = 0;
         public static int PublicCursorY = 0;
         public static bool LoadedGame = false;
+        public static string PublicSaveName = "-";
 
         static ConsoleColor default_Background = ConsoleColor.Black;
         static ConsoleColor default_Foreground = ConsoleColor.White;
@@ -210,6 +212,22 @@ namespace minesweeper
                     case "akna": Console.WriteLine("Aknát találtál, ezért felrobbantál!"); break;
                     case "flagged": Console.WriteLine("Bejelölted az összes aknát, ami azt jelenti, hogy nyertél!"); break;
                     case "quit": Console.WriteLine("Kiléptél a jelenlegi játékból."); break;
+                }
+                if (gameover_type == "flagged")
+                {
+                    Console.WriteLine("\nSzeretnéd törölni a mentést? " + PublicSaveName);
+                    char answer = Console.ReadKey().KeyChar;
+                    if (answer == 'i')
+                    {
+                        try
+                        {
+                            File.Delete($"Games/{PublicSaveName}.mine");
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine("Hiba! A fájlt nem lehetett törölni. Hibakód: " + e.Message);
+                        }
+                    }
                 }
                 Console.ReadKey(true);
             } while (newgame);
@@ -536,6 +554,7 @@ namespace minesweeper
         /// </summary>
         public static void Reset()
         {
+            PublicSaveName = "-";
             gameover = false;
             gameover_type = "false";
             flagcount = 0;
@@ -777,6 +796,8 @@ namespace minesweeper
                     "Színek módosítása",
                     "Irányítás módosítása",
                     "Frissítési beállítások",
+                    "Mentések törlése",
+                    "Alaphelyzetbe állítás",
                     "Vissza"
                 };
             int selected = 0;
@@ -811,6 +832,9 @@ namespace minesweeper
                 break;
                 case 2:
                     Beállítások.Frissítés();
+                break;
+                case 3:
+                    Beállítások.Törlés.Menü();
                 break;
             }
         }
@@ -999,6 +1023,160 @@ namespace minesweeper
                 }
                 else if (key == ConsoleKey.Escape) break;
             } while (key != ConsoleKey.Enter);
+        }
+
+        public class Törlés
+        {
+            public static void Menü()
+            {
+                string[] options = {
+                    "Egy mentés törlése",
+                    "Összes mentés törlése",
+                    "Vissza"
+                };
+                int selected = 0;
+                ConsoleKey key;
+                do
+                {
+                    Console.Clear();
+                    Program.ASCII();
+                    Console.WriteLine("Szín beállítások:");
+                    for (int i = 0; i < options.Length; i++)
+                    {
+                        if (i == selected)
+                            Console.Write("> ");
+                        else
+                            Console.Write("  ");
+                        Console.WriteLine(options[i]);
+                    }
+
+                    key = Console.ReadKey(true).Key;
+                    if (key == ConsoleKey.UpArrow && selected > 0)
+                        selected--;
+                    else if (key == ConsoleKey.DownArrow && selected < options.Length - 1)
+                        selected++;
+                } while (key != ConsoleKey.Enter);
+                switch (selected)
+                {
+                    case 0:
+                        Console.CursorVisible = true;
+                        Beállítások.Törlés.Egy();
+                        Console.CursorVisible = false;
+                        break;
+                    case 1:
+                        Console.CursorVisible = true;
+                        Beállítások.Törlés.Összes();
+                        Console.CursorVisible = false;
+                        break;
+                }
+            }
+            public static void Összes()
+            {
+                Console.Clear();
+                Console.WriteLine("\nBiztosan szeretnéd törölni az ÖSSZES mentésedet? (i/n)");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Ez nem vonható vissza!");
+                Console.ResetColor();
+                char answer = Console.ReadKey().KeyChar;
+                if (answer == 'i')
+                {
+                    Console.Clear();
+                    Console.WriteLine("Törlés folyamatban...");
+                    Directory.CreateDirectory("Games");
+                    string[] files = Directory.GetFiles("Games", "*.mine");
+                    if (files.Length == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("Nincs egyetlen mentés sem!");
+                        Console.ResetColor();
+                        Thread.Sleep(1500);
+                    }
+                    if (files.Length != 0)
+                    {
+                        foreach (string file in files)
+                        {
+                            File.Delete(file);
+                        }
+                    }
+                    if (files.Length != 0)
+                    {
+                        Console.Clear();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("\nSikeres törlés!");
+                        Console.ResetColor();
+                        Thread.Sleep(1500);
+                    }
+                }
+            }
+            public static void Egy()
+            {
+                bool done = false;
+                string answerString;
+                do
+                {
+                    bool ok = false;
+                    do
+                    {
+                        Console.Clear();
+                        Directory.CreateDirectory("Games");
+                        string[] files = Directory.GetFiles("Games", "*.mine");
+                        Console.WriteLine("Elérhető mentések:");
+                        if (files.Length == 0)
+                        {
+                            Console.WriteLine("Nincs egyetlen mentés sem!");
+                        }
+                        if (files.Length != 0)
+                        {
+                            foreach (string file in files)
+                            {
+                                Console.WriteLine(Path.GetFileNameWithoutExtension(file));
+                            }
+                        }
+                        Console.WriteLine("\nMelyiket szeretnéd törölni? (\"-\" a visszalépéshez)");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Ez a művelet nem vonható vissza!");
+                        Console.ResetColor();
+                        answerString = Console.ReadLine()?.Trim() ?? "save";
+                        if (File.Exists($"Games/{answerString}.mine"))
+                        {
+                            try
+                            {
+                                File.Delete($"Games/{answerString}.mine");
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("\nSikeres törlés!");
+                                Console.ResetColor();
+                                Thread.Sleep(1500);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("A fájlt nem lehetett törölni. Hibakód: " + e);
+                                Console.ResetColor();
+                                Thread.Sleep(1500);
+                            }
+                        }
+                        else
+                        {
+                            if (answerString != "-")
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("A fájl nem létezik!");
+                                Console.ResetColor();
+                                Thread.Sleep(1500);
+                            }
+                            else if (answerString == "-") ok = true;
+                        }
+                    } while (!ok);
+                    if (answerString != "-")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("\nSzeretnél másik fájlt is törölni? (i/n)");
+                        char answer = Console.ReadKey().KeyChar;
+                        if (answer == 'n') done = true;
+                    }
+                    else done = true;
+                } while (!done);
+            }
         }
 
         public static void Betűszín()
@@ -1597,7 +1775,7 @@ namespace minesweeper
                         Program.PublicVisible[x, y] = "false";
                 }
             }
-
+            Program.PublicSaveName = name;
             Program.LoadedGame = true;
         }
     }
