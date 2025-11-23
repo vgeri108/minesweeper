@@ -17,9 +17,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Beta";
-        public const string Version_Prefix = "1"; // latest: Beta 1.6.5
-        public const string Version_Suffix = "6.6/4";
+        public const string Version_type = "Debug";
+        public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
+        public const string Version_Suffix = "6.6/5";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -63,6 +63,8 @@ namespace minesweeper
         public static int PublicMeretSZ = 0;
         public static int PublicAknakszama = 0;
         public static int PublicFlagcount = 0;
+        public static int PublicCursorX = 0;
+        public static int PublicCursorY = 0;
         public static bool LoadedGame = false;
 
         static ConsoleColor default_Background = ConsoleColor.Black;
@@ -190,6 +192,8 @@ namespace minesweeper
                     visible = PublicVisible;
                     aknakszama = PublicAknakszama;
                     flagcount = PublicFlagcount;
+                    cursor_x = PublicCursorX;
+                    cursor_y = PublicCursorY;
                 }
                 Console.Clear();
                 Console.Title = "Aknakereső - Generálás...";
@@ -530,7 +534,7 @@ namespace minesweeper
         /// <summary>
         /// Játék belső változóinak alaphelyzetbe állítása
         /// </summary>
-        static void Reset()
+        public static void Reset()
         {
             gameover = false;
             gameover_type = "false";
@@ -541,6 +545,8 @@ namespace minesweeper
             PublicFlagcount = 0;
             PublicMeretM = 0;
             PublicMeretSZ = 0;
+            PublicCursorX = 0;
+            PublicCursorY = 0;
             PublicAkna = new string[0,0];
             PublicVisible = new string[0,0];
             Console.SetCursorPosition(0, 0);
@@ -679,6 +685,7 @@ namespace minesweeper
                         {
                             LoadedGame = true;
                         }
+                        Console.CursorVisible = false;
                         break;
                     case 5:
                         Settings();
@@ -851,6 +858,8 @@ namespace minesweeper
                     PublicAknakszama = aknakszama;
                     PublicMeretM = meretM;
                     PublicMeretSZ = meretSZ;
+                    PublicCursorX = cursor_x;
+                    PublicCursorY = cursor_y;
                     PublicFlagcount = flagcount;
                     MyConfig.SaveGame(akna, visible);
                     break;
@@ -1357,6 +1366,8 @@ namespace minesweeper
         {
             public int meretM { get; set; }
             public int meretSZ { get; set; }
+            public int CursorX {  get; set; }
+            public int CursorY { get; set; }
             public int aknakszama { get; set; }
             public int flagged { get; set; }
             public Dictionary<string, string> akna { get; set; } = new();
@@ -1460,6 +1471,8 @@ namespace minesweeper
             {
                 meretM = Program.PublicMeretM,
                 meretSZ = Program.PublicMeretSZ,
+                CursorX = Program.PublicCursorX,
+                CursorY = Program.PublicCursorY,
                 aknakszama = Program.PublicAknakszama,
                 flagged = Program.PublicFlagcount
             };
@@ -1504,8 +1517,10 @@ namespace minesweeper
         {
             string name = NameLoad();
             if (name == "-")
+            {
+                Program.Reset();
                 return;
-
+            }
             string path = $"{name}.mine";
             if (!File.Exists(path))
                 return;
@@ -1515,6 +1530,8 @@ namespace minesweeper
             if (data == null) return;
             Program.PublicMeretM = data.meretM;
             Program.PublicMeretSZ = data.meretSZ;
+            Program.PublicCursorX = data.CursorX;
+            Program.PublicCursorY = data.CursorY;
             Program.PublicAknakszama = data.aknakszama;
             Program.PublicFlagcount = data.flagged;
             Program.PublicAkna = new string[data.meretM, data.meretSZ];
