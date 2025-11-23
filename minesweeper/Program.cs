@@ -19,7 +19,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
-        public const string Version_Suffix = "6.6/6";
+        public const string Version_Suffix = "6.6/7";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -1507,7 +1507,23 @@ namespace minesweeper
             do
             {
                 ok = true;
-                Console.WriteLine("Játék betöltése (\"-\" a visszalépéshez)\n");
+
+                Directory.CreateDirectory("Games");
+                string[] files = Directory.GetFiles("Games", "*.mine");
+                Console.WriteLine("Elérhető mentések:");
+                if (files.Length == 0)
+                {
+                    Console.WriteLine("Nincs egyetlen mentés sem!");
+                }
+                if (files.Length != 0)
+                {
+                    foreach (string file in files)
+                    {
+                        Console.WriteLine(Path.GetFileNameWithoutExtension(file));
+                    }
+                }
+
+                Console.WriteLine("\nJáték betöltése (\"-\" a visszalépéshez)\n");
                 Console.Write("A mentés neve: ");
                 name = Console.ReadLine()?.Trim() ?? "save";
 
