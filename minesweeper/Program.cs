@@ -20,7 +20,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
-        public const string Version_Suffix = "6.6/9";
+        public const string Version_Suffix = "6.6/10";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -559,6 +559,7 @@ namespace minesweeper
         public static void Reset()
         {
             PublicSaveName = "-";
+            LoadedGame = false;
             gameover = false;
             gameover_type = "false";
             flagcount = 0;
@@ -801,7 +802,6 @@ namespace minesweeper
                     "Irányítás módosítása",
                     "Frissítési beállítások",
                     "Mentések törlése",
-                    "Alaphelyzetbe állítás",
                     "Vissza"
                 };
             int selected = 0;
