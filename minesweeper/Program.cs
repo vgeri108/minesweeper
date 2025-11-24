@@ -20,7 +20,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
-        public const string Version_Suffix = "6.6/8";
+        public const string Version_Suffix = "6.6/9";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -215,17 +215,21 @@ namespace minesweeper
                 }
                 if (gameover_type == "flagged")
                 {
-                    Console.WriteLine("\nSzeretnéd törölni a mentést? " + PublicSaveName);
-                    char answer = Console.ReadKey().KeyChar;
-                    if (answer == 'i')
+                    if (PublicSaveName != "-")
                     {
-                        try
+                        Console.WriteLine($"\nSzeretnéd törölni a mentést: {PublicSaveName}? (i/n)");
+                        char answer = Console.ReadKey().KeyChar;
+                        if (answer == 'i')
                         {
-                            File.Delete($"Games/{PublicSaveName}.mine");
-                        }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine("Hiba! A fájlt nem lehetett törölni. Hibakód: " + e.Message);
+                            try
+                            {
+                                File.Delete($"Games/{PublicSaveName}.mine");
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Hiba! A fájlt nem lehetett törölni. Hibakód: " + e.Message);
+                                Thread.Sleep(1500);
+                            }
                         }
                     }
                 }
