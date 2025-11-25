@@ -20,13 +20,11 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
-        public const string Version_Suffix = "6.6/10";
+        public const string Version_Suffix = "6.6/11";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
         public static bool frissités_elérhető = false;
-        public static string frissítés_info = "nincs";
-        public static string frissítés_link = "about:blank";
         public static Dictionary<string, bool> UpdateConfig = new Dictionary<string, bool>()
         {
             {"auto_check", true},
@@ -100,6 +98,14 @@ namespace minesweeper
             {fedes, ConsoleColor.DarkBlue}
         };
 
+        public static string frissítés_sor_1 = " ";
+        public static string frissítés_sor_2 = " ";
+        public static string frissítés_sor_3 = " ";
+        public static string frissítés_sor_4 = " ";
+        public static string frissítés_sor_5 = " ";
+        public static string frissítés_sor_6 = " ";
+        public static string frissítés_sor_7 = " ";
+
         [DllImport("kernel32.dll")]
         static extern IntPtr GetStdHandle(int nStdHandle);
         [DllImport("kernel32.dll")]
@@ -127,7 +133,7 @@ namespace minesweeper
             }
         }
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             try
             {
@@ -1409,15 +1415,26 @@ namespace minesweeper
                         List<string> sorok = new List<string>(content.Split('\n'));
                         Program.github_version = $"{sorok[0]} {sorok[1]}.{sorok[2]}";
                         Program.frissités_elérhető = !(Program.local_version == Program.github_version);
-                        Program.frissítés_info = sorok[3];
-                        Program.frissítés_link = sorok[4];
+                        Program.frissítés_sor_1 = sorok[3];
+                        Program.frissítés_sor_2 = sorok[4];
+                        Program.frissítés_sor_3 = sorok[5];
+                        Program.frissítés_sor_4 = sorok[6];
+                        Program.frissítés_sor_5 = sorok[7];
+                        Program.frissítés_sor_6 = sorok[8];
+                        Program.frissítés_sor_7 = sorok[9];
                         if (Program.frissités_elérhető)
                         {
                             Kérdez();
                         }
                     }
                 }
-                catch (Exception) { }
+                catch (Exception e)
+                {
+                    StreamWriter sw = new StreamWriter("communicate-error.txt");
+                    sw.WriteLine(e.Message);
+                    sw.Flush();
+                    sw.Close();
+                }
             }
         }
         public static void Install()
@@ -1471,8 +1488,13 @@ namespace minesweeper
         {
             Console.Clear();
             Console.WriteLine($"\nEgy frissítés érhető el: {Program.github_version}.\n");
-            Console.WriteLine("Frissítési megjegyzés: " + Program.frissítés_info);
-            Console.WriteLine("Frissítés linke: " + Program.frissítés_link);
+            Console.WriteLine(Program.frissítés_sor_1);
+            Console.WriteLine(Program.frissítés_sor_2);
+            Console.WriteLine(Program.frissítés_sor_3);
+            Console.WriteLine(Program.frissítés_sor_4);
+            Console.WriteLine(Program.frissítés_sor_5);
+            Console.WriteLine(Program.frissítés_sor_6);
+            Console.WriteLine(Program.frissítés_sor_7);
             Console.WriteLine();
             Console.WriteLine("Szeretnéd letölteni? (i/n)");
             char answer = Console.ReadKey(true).KeyChar;
