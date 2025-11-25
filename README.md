@@ -18,7 +18,7 @@ A Linux és MacOS nincs támogatva!
 [Telepítési segítségek](markdown/windows-versions.md)
 
 ## Irányítás
-- Kurzor mozgatás: `nyílgombok`  
+- Kurzor mozgatás: `Nyílgombok`  
 - Mező kiásása: `W`  
 - Mező bezászlózása: `Space`  
 - Kilépés a menübe: `Escape`
