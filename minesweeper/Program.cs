@@ -18,9 +18,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Debug";
+        public const string Version_type = "Beta";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.6/4
-        public const string Version_Suffix = "6.6/11";
+        public const string Version_Suffix = "6.7";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -906,6 +906,9 @@ namespace minesweeper
     /// </summary>
     class Beállítások
     {
+        /// <summary>
+        /// Beállításokon belül a Színek menü
+        /// </summary>
         public static void Színek()
         {
             string[] options = {
@@ -941,6 +944,9 @@ namespace minesweeper
                 case 1: Beállítások.Betűszín(); break;
             }
         }
+        /// <summary>
+        /// Beállításokon belül a Hátterek menü
+        /// </summary>
         public static void Hátterek()
         {
             string[] options = {
@@ -1034,9 +1040,14 @@ namespace minesweeper
                 else if (key == ConsoleKey.Escape) break;
             } while (key != ConsoleKey.Enter);
         }
-
+        /// <summary>
+        /// Mentéstörlés menü
+        /// </summary>
         public class Törlés
         {
+            /// <summary>
+            /// Törlések főmenüje
+            /// </summary>
             public static void Menü()
             {
                 string[] options = {
@@ -1080,6 +1091,9 @@ namespace minesweeper
                         break;
                 }
             }
+            /// <summary>
+            /// Összes mentés törlése párbeszéd
+            /// </summary>
             public static void Összes()
             {
                 Console.Clear();
@@ -1118,6 +1132,9 @@ namespace minesweeper
                     }
                 }
             }
+            /// <summary>
+            /// Egy mentés törlése párbeszéd
+            /// </summary>
             public static void Egy()
             {
                 bool done = false;
@@ -1188,7 +1205,9 @@ namespace minesweeper
                 } while (!done);
             }
         }
-
+        /// <summary>
+        /// Betűszín beállításai a menüben
+        /// </summary>
         public static void Betűszín()
         {
             string[] options = {
@@ -1282,8 +1301,14 @@ namespace minesweeper
                 else if (key == ConsoleKey.Escape) break;
             } while (key != ConsoleKey.Enter);
         }
+        /// <summary>
+        /// Irányítás beálításai a menüben
+        /// </summary>
         public class Irányítás
         {
+            /// <summary>
+            /// Irányítások főmenüje
+            /// </summary>
             public static void Irányítás_Menü()
             {
                 string[] options = {
@@ -1327,6 +1352,9 @@ namespace minesweeper
                         break;
                 }
             }
+            /// <summary>
+            /// Ásás billentyűjének módosítása
+            /// </summary>
             public static void Dig()
             {
                 Console.Clear();
@@ -1340,6 +1368,9 @@ namespace minesweeper
                     Program.Billentyűk["dig"] = readed;
                 }
             }
+            /// <summary>
+            /// Zászlózás billentyűjének módosítása
+            /// </summary>
             public static void Flag()
             {
                 Console.Clear();
@@ -1354,6 +1385,9 @@ namespace minesweeper
                 }
             }
         }
+        /// <summary>
+        /// Frissítések menü
+        /// </summary>
         public static void Frissítés()
         {
             string[] options = {
@@ -1401,8 +1435,15 @@ namespace minesweeper
             }
         }
     }
+    /// <summary>
+    /// Frissítés kezelés osztály
+    /// </summary>
     class Update
     {
+        /// <summary>
+        /// Frissítés ellenőrzés
+        /// Kérdez() meghívása
+        /// </summary>
         public static void Check()
         {
             if (Program.VanInternet())
@@ -1437,6 +1478,9 @@ namespace minesweeper
                 }
             }
         }
+        /// <summary>
+        /// Frissítés telepítése
+        /// </summary>
         public static void Install()
         {
             Console.Clear();
@@ -1484,6 +1528,9 @@ namespace minesweeper
                 Console.WriteLine($"Hiba történt: {ex.Message}");
             }
         }
+        /// <summary>
+        /// Frissítés letöltése kérdés
+        /// </summary>
         public static void Kérdez()
         {
             Console.Clear();
@@ -1503,8 +1550,14 @@ namespace minesweeper
                 Install();
             }
         }
+        /// <summary>
+        /// Frissítések menü
+        /// </summary>
         public class Menü
         {
+            /// <summary>
+            /// Frissítések menü főmenüje
+            /// </summary>
             public static void Főmenü()
             {
                 string[] options = {
@@ -1550,6 +1603,9 @@ namespace minesweeper
             }
         }
     }
+    /// <summary>
+    /// JSON kezelés
+    /// </summary>
     class MyConfig
     {
         private static string configPath = "config.json";
@@ -1559,6 +1615,9 @@ namespace minesweeper
             TypeInfoResolver = new DefaultJsonTypeInfoResolver()
         };
 
+        /// <summary>
+        /// config.json adatai
+        /// </summary>
         public class ConfigData
         {
             public Dictionary<string, string> Irányítás { get; set; } = new();
@@ -1566,7 +1625,9 @@ namespace minesweeper
             public Dictionary<string, string> Szín_Háttér { get; set; } = new();
             public Dictionary<string, string> Szín_Betű { get; set; } = new();
         }
-
+        /// <summary>
+        /// .mine fájlok adatai
+        /// </summary>
         public class GameData
         {
             public int meretM { get; set; }
@@ -1578,6 +1639,9 @@ namespace minesweeper
             public Dictionary<string, string> akna { get; set; } = new();
             public Dictionary<string, string> visible { get; set; } = new();
         }
+        /// <summary>
+        /// Konfiguráció elmentése
+        /// </summary>
         public static void Save()
         {
             var config = new ConfigData
@@ -1591,7 +1655,9 @@ namespace minesweeper
             string json = JsonSerializer.Serialize(config, jsonOptions);
             File.WriteAllText(configPath, json);
         }
-
+        /// <summary>
+        /// Konfiguráció betöltése
+        /// </summary>
         public static void Load()
         {
             if (!File.Exists(configPath))
@@ -1627,7 +1693,10 @@ namespace minesweeper
                     Program.Szín_Betű[kv.Key] = color;
             }
         }
-
+        /// <summary>
+        /// Mentés nevének bekérése
+        /// </summary>
+        /// <returns>Validált Név</returns>
         private static string NameSave()
         {
             Directory.CreateDirectory("Games");
@@ -1670,7 +1739,11 @@ namespace minesweeper
             Console.CursorVisible = false;
             return name;
         }
-
+        /// <summary>
+        /// Mentés kiírása .mine fájlba
+        /// </summary>
+        /// <param name="akna"></param>
+        /// <param name="visible"></param>
         public static void SaveGame(string[,] akna, string[,] visible)
         {
             Directory.CreateDirectory("Games");
@@ -1700,7 +1773,10 @@ namespace minesweeper
             string json = JsonSerializer.Serialize(config, jsonOptions);
             File.WriteAllText($"Games/{name}.mine", json);
         }
-
+        /// <summary>
+        /// Mentés nevének bekérése
+        /// </summary>
+        /// <returns>Validált Név</returns>
         private static string NameLoad()
         {
             Console.CursorVisible = true;
@@ -1745,7 +1821,9 @@ namespace minesweeper
             Console.CursorVisible = false;
             return name;
         }
-
+        /// <summary>
+        /// .mine betöltése
+        /// </summary>
         public static void LoadGame()
         {
             string name = NameLoad();

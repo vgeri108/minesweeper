@@ -1,12 +1,12 @@
 Beta
 1
-6.6/4
-Játékmentések
-https://github.com/vgeri108/minesweeper/releases/tag/vB1.6.6.4
-2
-3
-4
-5
-https://github.com/vgeri108/minesweeper/releases/tag/vB1.6.6.4
+6.7
+Játékmentések II.
+ => Mentések listázása betöltéskor
+ => Mentések törlése a programból
+ => Kurzor pozíció mentése
+ => Games mappába mentődnek a mentések
+ 
+https://github.com/vgeri108/minesweeper/releases/tag/vB1.6.7
 //Ez a fájl az új verzió ellenőrzéséhez szükséges.
 //Semmi más jelentősége nincs.
