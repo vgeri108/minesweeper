@@ -1,12 +1,12 @@
 Beta
 1
-6.7
-Játékmentések II.
- => Mentések listázása betöltéskor
- => Mentések törlése a programból
- => Kurzor pozíció mentése
- => Games mappába mentődnek a mentések
+6.8
+Szövegjavítások
  
-https://github.com/vgeri108/minesweeper/releases/tag/vB1.6.7
+ => Játékfeliratok módosítása
+ => Frissítést csak egyszer kell megerősíteni
+ => Frissítés letöltés javítása
+ 
+https://github.com/vgeri108/minesweeper/releases/tag/vB1.6.8
 //Ez a fájl az új verzió ellenőrzéséhez szükséges.
 //Semmi más jelentősége nincs.

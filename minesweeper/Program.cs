@@ -18,9 +18,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Debug";
+        public const string Version_type = "Beta";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.7
-        public const string Version_Suffix = "6.7.3";
+        public const string Version_Suffix = "6.8";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -161,7 +161,7 @@ namespace minesweeper
                 Console.Title = "Aknakereső - Frissítés";
                 if (frissités_elérhető && UpdateConfig["auto_update"])
                 {
-                    Console.WriteLine("Automatikus frissítés folyamatban...");
+                    Console.WriteLine("Frissítés folyamatban...");
                     Update.Install();
                 }
             }
@@ -215,9 +215,19 @@ namespace minesweeper
                 Console.SetCursorPosition(0, meretM + 1);
                 switch (gameover_type)
                 {
-                    case "akna": Console.WriteLine("Aknát találtál, ezért felrobbantál!"); break;
-                    case "flagged": Console.WriteLine("Bejelölted az összes aknát, ami azt jelenti, hogy nyertél!"); break;
-                    case "quit": Console.WriteLine("Kiléptél a jelenlegi játékból."); break;
+                    case "akna":
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Felrobbantál.                   ");
+                        Console.ResetColor();
+                        break;
+                    case "flagged":
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Bejelölted az összes aknát.     ");
+                        Console.ResetColor();
+                        break;
+                    case "quit":
+                        Console.WriteLine("Kiléptél a jelenlegi játékból.  ");
+                        break;
                 }
                 if (gameover_type == "flagged")
                 {

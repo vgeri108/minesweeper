@@ -1,6 +1,6 @@
 --==## Aknakereső ##==--
 
-Verzió: Beta 1.6.7
+Verzió: Beta 1.6.8
 
 !!! FIGYELEM: Béta verzió !!!
 Hibák fordulhatnak elő!
@@ -12,13 +12,9 @@ A program használatához telepíteni kell a .NET keretrendszert.
 
 ----Frissítések----
 Játékbeli módosítások:
- => Mentések listázása betöltéskor
- => Mentések törlése a programból
+ => Játékfeliratok módosítása
 
 Kódbeli módosítások:
- => Kurzor pozíció mentése
- => Games mappába mentődnek a mentések
- => Új frissítési értesítés
- => XML dokumentáció
- => Új startmenü név
+ => Frissítést csak egyszer kell megerősíteni
+ => Frissítés letöltés javítása
 
