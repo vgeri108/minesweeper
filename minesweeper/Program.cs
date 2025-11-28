@@ -20,7 +20,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.7
-        public const string Version_Suffix = "6.7.2";
+        public const string Version_Suffix = "6.7.3";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -828,9 +828,9 @@ namespace minesweeper
         {
             settings_opened = true;
             string[] options = {
-                    "Színek módosítása",
-                    "Irányítás módosítása",
-                    "Frissítési beállítások",
+                    "Színek",
+                    "Irányítás",
+                    "Frissítések",
                     "Mentések törlése",
                     "Vissza"
                 };
@@ -880,7 +880,7 @@ namespace minesweeper
             string[] options = {
                     "Vissza a játékba",
                     "Mentés",
-                    "Kilépés mentés nélkül"
+                    "Kilépés"
                 };
             int selected = 0;
             ConsoleKey key;
@@ -894,7 +894,9 @@ namespace minesweeper
                         Console.Write("> ");
                     else
                         Console.Write("  ");
+                    if (i == 2) Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(options[i]);
+                    Console.ResetColor();
                 }
 
                 key = Console.ReadKey(true).Key;
@@ -926,7 +928,7 @@ namespace minesweeper
         }
     }
     /// <summary>
-    /// A beállítások menüponttjai
+    /// A beállítások menüpontjai
     /// </summary>
     class Beállítások
     {
@@ -936,8 +938,8 @@ namespace minesweeper
         public static void Színek()
         {
             string[] options = {
-                    "Hátter színek módosítása",
-                    "Betűszínek módosítása",
+                    "Háttér színek",
+                    "Betűszínek",
                     "Vissza"
                 };
             int selected = 0;
@@ -1336,8 +1338,8 @@ namespace minesweeper
             public static void Irányítás_Menü()
             {
                 string[] options = {
-                    "Ásás billentyű módosítás",
-                    "Zászlózás billentyű módosítás",
+                    "Ásás billentyű",
+                    "Zászlózás billentyű",
                     "Vissza"
                 };
                 int selected = 0;
@@ -1416,7 +1418,7 @@ namespace minesweeper
         {
             string[] options = {
                     "Frissítések keresése",
-                    "Automatikus frissítések beállításai",
+                    "Frissítések beállításai",
                     "Vissza"
                 };
             int selected = 0;
@@ -1449,7 +1451,9 @@ namespace minesweeper
                     Update.Check();
                     if (!Program.frissités_elérhető)
                     {
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nA legfrissebb verzió van telepítve!");
+                        Console.ResetColor();
                         Console.ReadKey();
                     }
                         break;
@@ -1512,40 +1516,21 @@ namespace minesweeper
             string filePath = Path.Combine(Environment.CurrentDirectory, "minesweeper_setup.exe");
             try
             {
-                Console.WriteLine("\nFájl letöltése folyamatban...");
+                Console.WriteLine("\nLetöltés folyamatban, kérjük várjon!");
                 using (HttpClient client = new HttpClient())
                 {
                     byte[] data = client.GetByteArrayAsync(url).Result;
                     File.WriteAllBytes(filePath, data);
-                    File.Create("minesweeper_setup.exe");
+                    //File.Create("minesweeper_setup.exe");
                 }
 
-                Console.WriteLine($"A letöltés sikeresen befejeződött!");
-                if (!Program.UpdateConfig["auto_update"])
+                Console.WriteLine("\nTelepítő indítása...");
+                Process.Start(new ProcessStartInfo()
                 {
-                    Console.Write("\nSzeretnéd elindítani a telepítőt? (i/n): ");
-                    char answer = Console.ReadKey(true).KeyChar;
-                    if (answer == 'i')
-                    {
-                        Console.WriteLine("\nTelepítő indítása...");
-                        Process.Start(new ProcessStartInfo()
-                        {
-                            FileName = filePath,
-                            UseShellExecute = true
-                        });
-                        Environment.Exit(0);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("\nTelepítő indítása...");
-                    Process.Start(new ProcessStartInfo()
-                    {
-                        FileName = filePath,
-                        UseShellExecute = true
-                    });
-                    Environment.Exit(0);
-                }
+                    FileName = filePath,
+                    UseShellExecute = true
+                });
+                Environment.Exit(0);
             }
             catch (Exception ex)
             {
@@ -1567,7 +1552,7 @@ namespace minesweeper
             Console.WriteLine(Program.frissítés_sor_6);
             Console.WriteLine(Program.frissítés_sor_7);
             Console.WriteLine();
-            Console.WriteLine("Szeretnéd letölteni? (i/n)");
+            Console.WriteLine("Szeretnéd telepíteni? (i/n)");
             char answer = Console.ReadKey(true).KeyChar;
             if (answer == 'i')
             {
