@@ -20,7 +20,7 @@ namespace minesweeper
     {
         public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Beta 1.6.7
-        public const string Version_Suffix = "6.7.1";
+        public const string Version_Suffix = "6.7.2";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -646,12 +646,12 @@ namespace minesweeper
                     case 3:
                         bool converted = false;
                         Console.CursorVisible = true;
+                        Console.Clear();
+                        Console.WriteLine("\nEgyedi méretű pálya létrehozása");
+                        Console.WriteLine($"Az ablak mérete: {Console.WindowWidth - marginRight} × {Console.WindowHeight - marginDown}\n");
                         do
                         {
                             converted = false;
-                            Console.Clear();
-                            Console.WriteLine("\nEgyedi méretű pálya létrehozása");
-                            Console.WriteLine($"Az ablak mérete: {Console.WindowWidth - marginRight} × {Console.WindowHeight - marginDown}\n");
                             Console.Write("Szélesség: ");
                             converted = int.TryParse(Console.ReadLine(), out meretSZ);
                             max = Console.WindowWidth;
@@ -661,19 +661,19 @@ namespace minesweeper
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                             else if (meretSZ < 2)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kevesebb!");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                             else if (meretSZ > max - marginRight)
                             {
+                                Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
                                 Console.WriteLine($"Az ablak mérete: {Console.WindowWidth - marginRight} × {Console.WindowHeight - marginDown}");
+                                Console.ResetColor();
                             }
                         } while (!(converted && meretSZ <= Console.WindowWidth - marginRight && meretSZ > 1));
                         do
@@ -687,14 +687,12 @@ namespace minesweeper
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                             else if (meretM < 2)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("A játékterület mérete nem lehet 1 vagy annál kevesebb!");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                             else if (meretM > max - marginDown)
                             {
@@ -702,7 +700,6 @@ namespace minesweeper
                                 Console.WriteLine("A megadott szám kívül esik az ablak méretén!");
                                 Console.WriteLine($"Az ablak mérete: {Console.WindowWidth - marginRight} × {Console.WindowHeight - marginDown}");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                         } while (!(converted && meretM <= Console.WindowHeight - marginDown && meretM > 1));
 
@@ -717,21 +714,18 @@ namespace minesweeper
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("A megadott érték nem szám vagy nem egész szám!");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                             else if (aknakszama < 1)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("Az aknák száma nem lehet 0 vagy annál kevesebb!");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                             else if (aknakszama > max)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("Legalább egy üres helynek lennie kell a pályán, nem lehet annál többet megadni!");
                                 Console.ResetColor();
-                                Console.ReadKey(true);
                             }
                         } while (!(converted && aknakszama < max && aknakszama > 0));
                         siker = true;
