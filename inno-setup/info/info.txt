@@ -7,9 +7,6 @@ Hibák fordulhatnak elő!
 Ha hibát talál kérem jelentse!
 Hibabejelentés itt: https://github.com/vgeri108/minesweeper/issues/
 
-!!! FIGYELEM: .NET szükséges !!!
-A program használatához telepíteni kell a .NET keretrendszert.
-
 ----Frissítések----
 Játékbeli módosítások:
  => Játékfeliratok módosítása

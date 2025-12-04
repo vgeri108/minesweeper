@@ -7,9 +7,7 @@
 ```
 
 ## Telepítés
-A program működéséhez kell telepített .NET keretrendszer.\
 Az Aknakereső telepítője letölthető [innen](inno-setup/scripts/Output/minesweeper_setup.exe).
-
 
 ## Irányítás
 - Kurzor mozgatás: `Nyílgombok`  

@@ -19,7 +19,7 @@ namespace minesweeper
     public class Program
     {
         public const string Version_type = "Beta";
-        public const string Version_Prefix = "1"; // latest: Beta 1.6.7
+        public const string Version_Prefix = "1"; // latest: Beta 1.6.8
         public const string Version_Suffix = "6.8";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
