@@ -1667,7 +1667,7 @@ namespace minesweeper
         {
             var config = new ConfigData
             {
-                JsonVersion = "Console",
+                JsonVersion = Program.local_version,
                 Irányítás = Program.Billentyűk.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
                 UpdateConfig = Program.UpdateConfig.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
                 Szín_Háttér = Program.Szín_Háttér.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
@@ -1776,7 +1776,7 @@ namespace minesweeper
 
             var config = new GameData
             {
-                JsonVersion = "Console",
+                JsonVersion = Program.local_version,
                 meretM = Program.PublicMeretM,
                 meretSZ = Program.PublicMeretSZ,
                 CursorX = Program.PublicCursorX,

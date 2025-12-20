@@ -2,17 +2,17 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Aknakereső konzol"
-#define MyAppVersion "Beta 1.6.8"
+#define MyAppVersion "Relase 1.7"
 #define MyAppPublisher "vgeri108"
 #define MyAppURL "https://github.com/vgeri108/minesweeper"
 #define MyAppExeName "minesweeper.exe"
-#define username "Geri"
-#define type "vs-beta"
+#define username "laszl"
+#define type "vs-relase"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{EEBAD25F-1162-41CF-9BBE-98F61466BFB4}}
+AppId={{C91CB5F6-6162-4A0A-9A6C-7046174DBE0A}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
