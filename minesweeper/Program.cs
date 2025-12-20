@@ -18,9 +18,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Beta";
-        public const string Version_Prefix = "1"; // latest: Beta 1.6.8
-        public const string Version_Suffix = "6.8";
+        public const string Version_type = "Relase";
+        public const string Version_Prefix = "1"; // latest: Relase 1.7
+        public const string Version_Suffix = "7";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -174,7 +174,7 @@ namespace minesweeper
                 }
             }catch (Exception e)
             {
-                StreamWriter sw = new StreamWriter("latestlog.txt");
+                StreamWriter sw = new StreamWriter("latest_error.txt");
                 sw.WriteLine(e);
                 sw.Flush();
                 sw.Close();
@@ -1509,7 +1509,7 @@ namespace minesweeper
                 }
                 catch (Exception e)
                 {
-                    StreamWriter sw = new StreamWriter("communicate-error.txt");
+                    StreamWriter sw = new StreamWriter("latest_error.txt");
                     sw.WriteLine(e.Message);
                     sw.Flush();
                     sw.Close();
@@ -1639,6 +1639,7 @@ namespace minesweeper
         /// </summary>
         public class ConfigData
         {
+            public string JsonVersion { get; set; } = "Console";
             public Dictionary<string, string> Irányítás { get; set; } = new();
             public Dictionary<string, string> UpdateConfig { get; set; } = new();
             public Dictionary<string, string> Szín_Háttér { get; set; } = new();
@@ -1649,6 +1650,7 @@ namespace minesweeper
         /// </summary>
         public class GameData
         {
+            public string JsonVersion { get; set; } = "Console";
             public int meretM { get; set; }
             public int meretSZ { get; set; }
             public int CursorX { get; set; }
@@ -1665,6 +1667,7 @@ namespace minesweeper
         {
             var config = new ConfigData
             {
+                JsonVersion = "Console",
                 Irányítás = Program.Billentyűk.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
                 UpdateConfig = Program.UpdateConfig.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
                 Szín_Háttér = Program.Szín_Háttér.ToDictionary(kv => kv.Key, kv => kv.Value.ToString()),
@@ -1773,6 +1776,7 @@ namespace minesweeper
 
             var config = new GameData
             {
+                JsonVersion = "Console",
                 meretM = Program.PublicMeretM,
                 meretSZ = Program.PublicMeretSZ,
                 CursorX = Program.PublicCursorX,
