@@ -18,9 +18,9 @@ namespace minesweeper
 {
     public class Program
     {
-        public const string Version_type = "Relase";
+        public const string Version_type = "Debug";
         public const string Version_Prefix = "1"; // latest: Relase 1.7
-        public const string Version_Suffix = "7";
+        public const string Version_Suffix = "7.1";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
@@ -353,6 +353,7 @@ namespace minesweeper
         /// <param name="akna"></param>
         /// <param name="visible">Ami true az fog látszódni</param>
         /// <param name="clear">Console.Clear() végrehajtása ha true</param>
+        /// <param name="nincsFedes">Ha true akkor minden mező látható lesz.</param>
         static void Draw(string[,] akna, string[,] visible, bool clear, bool nincsFedes)
         {
             
@@ -617,7 +618,7 @@ namespace minesweeper
                 ConsoleKey key;
                 do
                 {
-                    Console.Clear();
+                    Console.SetCursorPosition(0,0);
                     ASCII();
                     Console.WriteLine("=== Főmenü ===\n");
                     for (int i = 0; i < options.Length; i++)
@@ -750,7 +751,9 @@ namespace minesweeper
                         Console.CursorVisible = false;
                         break;
                     case 5:
+                        Console.Clear();
                         Settings();
+                        Console.Clear();
                     break;
                     case 6:
                         Environment.Exit(0);
@@ -848,7 +851,7 @@ namespace minesweeper
             ConsoleKey key;
             do
             {
-                Console.Clear();
+                Console.SetCursorPosition(0,0);
                 Program.ASCII();
                 Console.WriteLine("Beállítások:");
                 for (int i = 0; i < options.Length; i++)
@@ -869,17 +872,25 @@ namespace minesweeper
             switch (selected)
             {
                 case 0:
+                    Console.Clear();
                     Beállítások.Színek();
+                    Console.Clear();
                 break;
                 case 1:
+                    Console.Clear();
                     Beállítások.Irányítás.Irányítás_Menü();
-                break;
+                    Console.Clear();
+                    break;
                 case 2:
+                    Console.Clear();
                     Beállítások.Frissítés();
-                break;
+                    Console.Clear();
+                    break;
                 case 3:
+                    Console.Clear();
                     Beállítások.Törlés.Menü();
-                break;
+                    Console.Clear();
+                    break;
             }
         }
         /// <summary>
@@ -887,6 +898,7 @@ namespace minesweeper
         /// </summary>
         static void Quit(string[,] akna, string[,] visible)
         {
+            Console.Clear();
             string[] options = {
                     "Vissza a játékba",
                     "Mentés",
@@ -896,7 +908,7 @@ namespace minesweeper
             ConsoleKey key;
             do
             {
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 Console.WriteLine("\nJáték megállítva:");
                 for (int i = 0; i < options.Length; i++)
                 {
@@ -956,7 +968,7 @@ namespace minesweeper
             ConsoleKey key;
             do
             {
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 Program.ASCII();
                 Console.WriteLine("Szín beállítások:");
                 for (int i = 0; i < options.Length; i++)
@@ -976,8 +988,16 @@ namespace minesweeper
             } while (key != ConsoleKey.Enter);
             switch (selected)
             {
-                case 0: Beállítások.Hátterek(); break;
-                case 1: Beállítások.Betűszín(); break;
+                case 0:
+                    Console.Clear();
+                    Beállítások.Hátterek();
+                    Console.Clear();
+                    break;
+                case 1:
+                    Console.Clear();
+                    Beállítások.Betűszín();
+                    Console.Clear();
+                    break;
             }
         }
         /// <summary>
@@ -1006,7 +1026,7 @@ namespace minesweeper
             bool first = true;
             do
             {
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 Console.WriteLine("--==## Háttérszín ##==--");
                 Console.WriteLine();
                 for (int i = 0; i < options.Length; i++)
@@ -1095,7 +1115,7 @@ namespace minesweeper
                 ConsoleKey key;
                 do
                 {
-                    Console.Clear();
+                    Console.SetCursorPosition(0, 0);
                     Program.ASCII();
                     Console.WriteLine("Szín beállítások:");
                     for (int i = 0; i < options.Length; i++)
@@ -1267,7 +1287,7 @@ namespace minesweeper
             bool first = true;
             do
             {
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 Console.WriteLine("--==## Betűszín ##==--");
                 Console.WriteLine();
                 for (int i = 0; i < options.Length; i++)
@@ -1356,7 +1376,7 @@ namespace minesweeper
                 ConsoleKey key;
                 do
                 {
-                    Console.Clear();
+                    Console.SetCursorPosition(0, 0);
                     Program.ASCII();
                     Console.WriteLine("Irányítás beállítások:");
                     for (int i = 0; i < options.Length; i++)
@@ -1435,7 +1455,7 @@ namespace minesweeper
             ConsoleKey key;
             do
             {
-                Console.Clear();
+                Console.SetCursorPosition(0, 0);
                 Program.ASCII();
                 Console.WriteLine("Frissítés beállítások:");
                 for (int i = 0; i < options.Length; i++)
