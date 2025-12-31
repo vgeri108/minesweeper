@@ -2,11 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Aknakereső konzol"
-#define MyAppVersion "Relase 1.7"
+#define MyAppVersion "Relase 1.8"
 #define MyAppPublisher "vgeri108"
 #define MyAppURL "https://github.com/vgeri108/minesweeper"
 #define MyAppExeName "minesweeper.exe"
-#define username "laszl"
+#define username "Geri"
 #define type "vs-relase"
 
 [Setup]
