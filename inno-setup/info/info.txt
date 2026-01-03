@@ -1,15 +1,11 @@
 --==## Aknakereső ##==--
 
-Verzió: Relase 1.8
+Verzió: Relase 1.8.1
 
 Ha hibát talál kérem jelentse!
 Hibabejelentés itt: https://github.com/vgeri108/minesweeper/issues/
 
 ----Frissítések----
 Játékbeli módosítások:
- => Nem kötelező a zászlók használata a nyeréshez
- => Nem villog a menü a billentyűlenyomásokra
-
-Kódbeli módosítások:
- => Osztályok külön fájlban vannak
-
+ => Nyerés és vesztés feliratok módosítva
+ => Frissítések csendes telepítése

@@ -69,7 +69,8 @@ namespace minesweeper
                 Process.Start(new ProcessStartInfo()
                 {
                     FileName = filePath,
-                    UseShellExecute = true
+                    UseShellExecute = true,
+                    Arguments = "/silent"
                 });
                 Environment.Exit(0);
             }
