@@ -20,8 +20,8 @@ namespace minesweeper
     public class Program
     {
         public const string Version_type = "Relase";
-        public const string Version_Prefix = "1"; // latest: Relase 1.8.1
-        public const string Version_Suffix = "8.1";
+        public const string Version_Prefix = "1"; // latest: Relase 1.8.2
+        public const string Version_Suffix = "8.2";
 
         public static string local_version = $"{Program.Version_type} {Program.Version_Prefix}.{Program.Version_Suffix}";
         public static string github_version = "NotSet";
