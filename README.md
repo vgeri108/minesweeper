@@ -5,6 +5,10 @@
  / ___ \|   <| | | | (_| |   <  __/ | |  __/\__ \ |_| |
 /_/   \_\_|\_\_| |_|\__,_|_|\_\___|_|  \___||___/\___/ 
 ```
+
+> [!NOTE]
+> A program jelenlegi kódja nem átlátható és nem tiszta. Emiatt a jövőben újra lesz írva az új [MinesweeperCore](https://github.com/vgeri108/MinesweeperCore) használatával.
+
 # Játékszabály
 
 **A játék elmélete:** A játék elején minden cella le van fedve. A cellákban lehetnek aknák, számok, de lehetnek üresek is. A számok azt mutatják, hogy körülöttük lévő 8 mezőben hány akna található.\
